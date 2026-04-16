@@ -1,0 +1,170 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --brand-navy: #0D2137;
+    --brand-charcoal: #1A1A1A;
+    --brand-carbon: #2B2B2B;
+    --brand-silver: #9AA0A6;
+    --brand-coral: #C9785A;
+    --brand-ivory: #F5F5F0;
+    --brand-gold: #C8893A;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-brand-charcoal text-brand-ivory font-sans antialiased;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3 {
+    @apply font-display;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  ::selection {
+    background: var(--brand-coral);
+    color: var(--brand-ivory);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--brand-coral);
+    outline-offset: 2px;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--brand-charcoal);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--brand-silver);
+    border-radius: 2px;
+  }
+}
+
+@layer components {
+  /* Capitol Terminal Scanline Effect */
+  .scanline {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      rgba(180, 0, 0, 0.15),
+      transparent
+    );
+    animation: scanLine 4s linear infinite;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  .terminal-text {
+    @apply font-terminal text-red-400;
+    text-shadow: 0 0 8px rgba(220, 50, 50, 0.6);
+  }
+
+  .terminal-glow {
+    text-shadow: 0 0 12px rgba(220, 50, 50, 0.8), 0 0 24px rgba(220, 50, 50, 0.4);
+  }
+
+  /* CRT Screen Effect */
+  .crt-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.05) 2px,
+      rgba(0, 0, 0, 0.05) 4px
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Noise texture overlay */
+  .noise-overlay::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Impact number animation */
+  .impact-number {
+    @apply font-display text-5xl font-light tabular-nums;
+    background: linear-gradient(135deg, var(--brand-coral) 0%, var(--brand-gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    @apply h-px bg-brand-silver/20 relative overflow-hidden;
+  }
+  .progress-bar-fill {
+    @apply absolute left-0 top-0 h-full bg-brand-coral;
+    transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Button variants */
+  .btn-primary {
+    @apply px-8 py-3.5 bg-brand-coral text-brand-ivory font-sans font-medium text-sm tracking-widest uppercase;
+    @apply transition-all duration-300 hover:bg-brand-coral-vivid;
+    letter-spacing: 0.12em;
+  }
+
+  .btn-outline {
+    @apply px-8 py-3.5 border border-brand-silver/30 text-brand-ivory font-sans font-medium text-sm tracking-widest uppercase;
+    @apply transition-all duration-300 hover:border-brand-coral hover:text-brand-coral;
+    letter-spacing: 0.12em;
+  }
+
+  .btn-ghost {
+    @apply px-4 py-2 text-brand-silver/60 font-sans text-sm;
+    @apply transition-all duration-200 hover:text-brand-ivory;
+  }
+}
+
+@layer utilities {
+  .text-gradient-coral {
+    background: linear-gradient(135deg, var(--brand-coral), var(--brand-gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .animate-delay-100 { animation-delay: 100ms; }
+  .animate-delay-200 { animation-delay: 200ms; }
+  .animate-delay-300 { animation-delay: 300ms; }
+  .animate-delay-500 { animation-delay: 500ms; }
+  .animate-delay-700 { animation-delay: 700ms; }
+
+  .opacity-0-init { opacity: 0; }
+}
