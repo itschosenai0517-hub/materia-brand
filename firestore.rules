@@ -1,0 +1,67 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── Helper functions ────────────────────────────────────────────────────
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isMember() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'member', 'enterprise'];
+    }
+
+    // ─── Users ───────────────────────────────────────────────────────────────
+    // Users can read/write their own profile, but CANNOT change their own role.
+    // Only Admin SDK (server-side) can set role.
+
+    match /users/{uid} {
+      allow read: if isSignedIn() && request.auth.uid == uid;
+      allow create: if isSignedIn() && request.auth.uid == uid
+        && request.resource.data.role == 'user';  // new users always start as 'user'
+      allow update: if isSignedIn() && request.auth.uid == uid
+        && !('role' in request.resource.data.diff(resource.data).affectedKeys());
+    }
+
+    // Admin can read all users
+    match /users/{uid} {
+      allow read, write: if isAdmin();
+    }
+
+    // ─── Products ────────────────────────────────────────────────────────────
+
+    match /products/{id} {
+      allow read: if true;          // public
+      allow write: if isAdmin();    // admin only
+    }
+
+    // ─── CSR Inquiries ───────────────────────────────────────────────────────
+
+    match /csr_inquiries/{id} {
+      allow create: if true;        // anyone can submit
+      allow read, update: if isAdmin();
+    }
+
+    // ─── Config / Impact Metrics ─────────────────────────────────────────────
+
+    match /config/{doc} {
+      allow read: if true;          // public read for impact counters
+      allow write: if isAdmin();
+    }
+
+    // ─── Easter Egg Sessions ─────────────────────────────────────────────────
+
+    match /easter_egg_sessions/{id} {
+      allow create: if true;        // log anonymously
+      allow read: if isAdmin();
+    }
+  }
+}

@@ -12,11 +12,14 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
+    target: 'es2020',
+    cssMinify: true,
     rollupOptions: {
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
           firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore'],
+          animation: ['framer-motion'],
         },
       },
     },

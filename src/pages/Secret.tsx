@@ -121,7 +121,7 @@ function AuthPrompt({ onSuccess, onFail }: { onSuccess: () => void; onFail: () =
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    const isValid = verifyCapitolPassword(input)
+    const isValid = await verifyCapitolPassword(input)
 
     if (isValid) {
       // Also try Firebase auth for actual role verification

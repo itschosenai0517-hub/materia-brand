@@ -1,31 +1,49 @@
 import CryptoJS from 'crypto-js'
 
-const SECRET_KEY = import.meta.env.VITE_ADMIN_PASSWORD || 'capitol-secret'
+// Encryption key for client-side data (non-sensitive, purely for obfuscation)
+// NOTE: This is intentionally NOT the admin password — do not store secrets here.
+const OBFUSCATION_KEY = 'materia-client-v1'
 
 export function encryptMessage(message: string): string {
-  return CryptoJS.AES.encrypt(message, SECRET_KEY).toString()
+  return CryptoJS.AES.encrypt(message, OBFUSCATION_KEY).toString()
 }
 
 export function decryptMessage(ciphertext: string): string {
   try {
-    const bytes = CryptoJS.AES.decrypt(ciphertext, SECRET_KEY)
+    const bytes = CryptoJS.AES.decrypt(ciphertext, OBFUSCATION_KEY)
     return bytes.toString(CryptoJS.enc.Utf8)
   } catch {
     return ''
   }
 }
 
-export function verifyCapitolPassword(input: string): boolean {
-  return input === SECRET_KEY
+/**
+ * Verify the Capitol Terminal password via Firebase Function (server-side).
+ * Returns true if the server confirms the password is valid.
+ * Falls back to false on any network/server error.
+ */
+export async function verifyCapitolPassword(input: string): Promise<boolean> {
+  try {
+    const res = await fetch('/api/verify-capitol', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: input }),
+    })
+    if (!res.ok) return false
+    const data = await res.json()
+    return data.granted === true
+  } catch {
+    return false
+  }
 }
 
 export function encryptUserData(data: object): string {
-  return CryptoJS.AES.encrypt(JSON.stringify(data), SECRET_KEY).toString()
+  return CryptoJS.AES.encrypt(JSON.stringify(data), OBFUSCATION_KEY).toString()
 }
 
 export function decryptUserData<T>(ciphertext: string): T | null {
   try {
-    const bytes = CryptoJS.AES.decrypt(ciphertext, SECRET_KEY)
+    const bytes = CryptoJS.AES.decrypt(ciphertext, OBFUSCATION_KEY)
     const str = bytes.toString(CryptoJS.enc.Utf8)
     return JSON.parse(str) as T
   } catch {
