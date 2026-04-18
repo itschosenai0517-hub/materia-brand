@@ -44,7 +44,7 @@ app.post('/api/verify-capitol', (req, res) => {
   const hashAdmin = createHash('sha256').update(adminSecret).digest()
   const hashUser  = createHash('sha256').update(userSecret).digest()
 
-  let role: 'admin' | 'user' | null = null
+  let role = null
   try {
     if (timingSafeEqual(hashToken, hashAdmin)) {
       role = 'admin'
