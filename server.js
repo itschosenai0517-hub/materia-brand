@@ -80,3 +80,4 @@ app.listen(PORT, () => {
   console.log(`[materia] ADMIN_SECRET: ${process.env.ADMIN_SECRET ? '✓ set' : '✗ NOT SET'}`)
   console.log(`[materia] USER_SECRET: ${process.env.USER_SECRET ? '✓ set' : '✗ NOT SET'}`)
 })
+
