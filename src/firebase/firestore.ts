@@ -4,6 +4,7 @@ import {
   getDoc,
   getDocs,
   addDoc,
+  deleteDoc,
   updateDoc,
   query,
   where,
@@ -64,6 +65,13 @@ export interface EasterEggSession {
   granted: boolean
 }
 
+export interface ChatMessage {
+  id?: string
+  role: 'admin' | 'user'
+  content: string          // AES-encrypted ciphertext
+  createdAt: unknown
+}
+
 // ─── Products ────────────────────────────────────────────────────────────────
 
 export async function getProducts(category?: string) {
@@ -102,7 +110,6 @@ export async function submitCSRInquiry(data: Omit<CSRInquiry, 'id' | 'status' | 
 export async function getImpactMetrics(): Promise<ImpactMetric> {
   const snap = await getDoc(doc(db, 'config', 'impact'))
   if (snap.exists()) return snap.data() as ImpactMetric
-  // Default values if not set
   return {
     artisanHours: 12480,
     donationAmount: 847200,
@@ -128,6 +135,47 @@ export async function logEasterEggAccess(uid: string, granted: boolean) {
     userAgent: navigator.userAgent,
     granted,
   })
+}
+
+// ─── Chat ─────────────────────────────────────────────────────────────────────
+
+/**
+ * Send a message to the shared Capitol chat room.
+ * content should already be AES-encrypted via encryptMessage().
+ */
+export async function sendChatMessage(
+  role: 'admin' | 'user',
+  encryptedContent: string
+) {
+  return addDoc(collection(db, 'capitol_chat'), {
+    role,
+    content: encryptedContent,
+    createdAt: serverTimestamp(),
+  })
+}
+
+/**
+ * Subscribe to the Capitol chat room in real time.
+ * Returns an unsubscribe function.
+ */
+export function subscribeChatMessages(
+  callback: (messages: ChatMessage[]) => void
+) {
+  const q = query(
+    collection(db, 'capitol_chat'),
+    orderBy('createdAt', 'asc')
+  )
+  return onSnapshot(q, snap => {
+    const messages = snap.docs.map(d => ({ id: d.id, ...d.data() } as ChatMessage))
+    callback(messages)
+  })
+}
+
+/**
+ * Delete a single chat message (admin only).
+ */
+export async function deleteChatMessage(messageId: string) {
+  return deleteDoc(doc(db, 'capitol_chat', messageId))
 }
 
 // ─── Admin ───────────────────────────────────────────────────────────────────

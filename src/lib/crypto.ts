@@ -18,22 +18,26 @@ export function decryptMessage(ciphertext: string): string {
 }
 
 /**
- * Verify the Capitol Terminal password via Firebase Function (server-side).
- * Returns true if the server confirms the password is valid.
- * Falls back to false on any network/server error.
+ * Verify the Capitol Terminal password via the server.
+ * Returns the role ('admin' | 'user') if valid, or null if denied.
  */
-export async function verifyCapitolPassword(input: string): Promise<boolean> {
+export async function verifyCapitolPassword(
+  input: string
+): Promise<'admin' | 'user' | null> {
   try {
     const res = await fetch('/api/verify-capitol', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: input }),
     })
-    if (!res.ok) return false
+    if (!res.ok) return null
     const data = await res.json()
-    return data.granted === true
+    if (data.granted && (data.role === 'admin' || data.role === 'user')) {
+      return data.role
+    }
+    return null
   } catch {
-    return false
+    return null
   }
 }
 

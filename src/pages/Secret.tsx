@@ -1,9 +1,16 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { verifyCapitolPassword } from '@/lib/crypto'
-import { logEasterEggAccess } from '@/firebase/firestore'
+import {
+  logEasterEggAccess,
+  sendChatMessage,
+  subscribeChatMessages,
+  deleteChatMessage,
+  type ChatMessage,
+} from '@/firebase/firestore'
 import { signIn } from '@/firebase/auth'
 import { useAuth } from '@/context/AuthContext'
+import { encryptMessage, decryptMessage } from '@/lib/crypto'
 
 // ─── Typewriter hook ──────────────────────────────────────────────────────────
 
@@ -51,21 +58,8 @@ function TerminalLine({ text, speed = 35, delay = 0, className = '' }: {
 
 // ─── Phases ───────────────────────────────────────────────────────────────────
 
-type Phase = 'boot' | 'auth' | 'access' | 'denied' | 'portal'
-
-interface PortalItem {
-  key: string
-  label: string
-  description: string
-  href?: string
-}
-
-const PORTAL_ITEMS: PortalItem[] = [
-  { key: '1', label: 'MEMBER ARCHIVE', description: '高端會員專屬區域，查看您的影響力記錄', href: '/portal' },
-  { key: '2', label: 'ENTERPRISE CHANNEL', description: '企業客戶機密合作通道', href: '/csr' },
-  { key: '3', label: 'ARTISAN NETWORK', description: '職人工作室與材料溯源資料庫', href: '/products' },
-  { key: '4', label: 'MISSION CONTROL', description: '管理員後台（需 Admin 角色）', href: '/admin' },
-]
+type Phase = 'boot' | 'auth' | 'chat' | 'denied'
+type Role = 'admin' | 'user'
 
 // ─── Sections ─────────────────────────────────────────────────────────────────
 
@@ -101,7 +95,13 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
   )
 }
 
-function AuthPrompt({ onSuccess, onFail }: { onSuccess: () => void; onFail: () => void }) {
+function AuthPrompt({
+  onSuccess,
+  onFail,
+}: {
+  onSuccess: (role: Role) => void
+  onFail: () => void
+}) {
   const [input, setInput] = useState('')
   const [email, setEmail] = useState('')
   const [step, setStep] = useState<'email' | 'password'>('email')
@@ -121,17 +121,16 @@ function AuthPrompt({ onSuccess, onFail }: { onSuccess: () => void; onFail: () =
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    const isValid = await verifyCapitolPassword(input)
+    const role = await verifyCapitolPassword(input)
 
-    if (isValid) {
-      // Also try Firebase auth for actual role verification
+    if (role) {
       if (email.trim()) {
         try {
           await signIn(email.trim(), input)
         } catch { /* ignore — password-only mode also allowed */ }
       }
       await logEasterEggAccess(user?.uid ?? 'anonymous', true)
-      onSuccess()
+      onSuccess(role)
     } else {
       await logEasterEggAccess(user?.uid ?? 'anonymous', false)
       onFail()
@@ -192,37 +191,133 @@ function AuthPrompt({ onSuccess, onFail }: { onSuccess: () => void; onFail: () =
   )
 }
 
-function AccessGranted({ onNavigate }: { onNavigate: (href: string) => void }) {
-  const { displayed: line1, done: done1 } = useTypewriter('ACCESS GRANTED.', 40, 0)
-  const { displayed: line2 } = useTypewriter('Welcome, Tribute. Choose your destination.', 35, 600)
+function ChatRoom({ role }: { role: Role }) {
+  const [messages, setMessages] = useState<ChatMessage[]>([])
+  const [input, setInput] = useState('')
+  const [sending, setSending] = useState(false)
+  const bottomRef = useRef<HTMLDivElement>(null)
+
+  // Subscribe to real-time messages
+  useEffect(() => {
+    const unsub = subscribeChatMessages(setMessages)
+    return unsub
+  }, [])
+
+  // Auto-scroll to bottom on new messages
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
+
+  const handleSend = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const text = input.trim()
+    if (!text || sending) return
+    setSending(true)
+    setInput('')
+    try {
+      const encrypted = encryptMessage(text)
+      await sendChatMessage(role, encrypted)
+    } catch (err) {
+      console.error('Failed to send message', err)
+    }
+    setSending(false)
+  }
+
+  const handleDelete = async (id: string) => {
+    if (role !== 'admin') return
+    try {
+      await deleteChatMessage(id)
+    } catch (err) {
+      console.error('Failed to delete message', err)
+    }
+  }
 
   return (
-    <div className="space-y-6">
-      <p className="font-terminal text-lg text-green-400" style={{ textShadow: '0 0 12px rgba(74,222,128,0.6)' }}>
-        {line1}{!done1 && <span className="animate-type-cursor">_</span>}
-      </p>
-      <p className="font-terminal text-sm text-red-700/70">{line2}</p>
-
-      <div className="pt-4 space-y-2">
-        {PORTAL_ITEMS.map((item, i) => (
-          <button
-            key={item.key}
-            onClick={() => item.href && onNavigate(item.href)}
-            className="w-full text-left p-4 border border-red-900/30 hover:border-red-700/60 hover:bg-red-950/30 transition-all duration-200 group"
-            style={{ animationDelay: `${i * 100 + 800}ms` }}
-          >
-            <div className="flex items-start gap-4">
-              <span className="font-terminal text-xs text-red-800/60 mt-0.5">[{item.key}]</span>
-              <div>
-                <p className="font-terminal text-sm text-red-300 group-hover:text-red-200 tracking-widest">
-                  {item.label}
-                </p>
-                <p className="font-terminal text-xs text-red-800/50 mt-1">{item.description}</p>
-              </div>
-            </div>
-          </button>
-        ))}
+    <div className="flex flex-col h-full space-y-4">
+      {/* Role badge */}
+      <div className="flex items-center gap-3">
+        <TerminalLine text="ENCRYPTED CHANNEL — ACTIVE" delay={0} className="text-green-400 terminal-glow" />
+        <span
+          className={`font-terminal text-xs tracking-widest px-2 py-0.5 border ${
+            role === 'admin'
+              ? 'text-yellow-400 border-yellow-900/50'
+              : 'text-red-400 border-red-900/50'
+          }`}
+        >
+          [{role.toUpperCase()}]
+        </span>
       </div>
+
+      {/* Message list */}
+      <div className="flex-1 overflow-y-auto space-y-3 pr-1 max-h-72 scrollbar-thin scrollbar-thumb-red-900/40">
+        {messages.length === 0 && (
+          <p className="font-terminal text-xs text-red-900/40 italic">// 頻道靜默中 — 等待通訊</p>
+        )}
+        {messages.map(msg => {
+          const decrypted = decryptMessage(msg.content)
+          const isOwn = msg.role === role
+          return (
+            <div
+              key={msg.id}
+              className={`flex items-start gap-2 group ${isOwn ? 'justify-end' : 'justify-start'}`}
+            >
+              {!isOwn && (
+                <span className={`font-terminal text-xs mt-0.5 ${
+                  msg.role === 'admin' ? 'text-yellow-700/60' : 'text-red-700/60'
+                }`}>
+                  [{msg.role.toUpperCase()}]
+                </span>
+              )}
+              <div
+                className={`max-w-xs px-3 py-2 border text-sm font-terminal ${
+                  isOwn
+                    ? 'border-red-700/40 bg-red-950/30 text-red-200 text-right'
+                    : 'border-red-900/30 text-red-400'
+                }`}
+              >
+                {decrypted || <span className="opacity-30 italic">// 無法解密</span>}
+              </div>
+              {isOwn && (
+                <span className="font-terminal text-xs mt-0.5 text-red-700/60">
+                  [{role.toUpperCase()}]
+                </span>
+              )}
+              {/* Admin delete button */}
+              {role === 'admin' && msg.id && (
+                <button
+                  onClick={() => handleDelete(msg.id!)}
+                  className="opacity-0 group-hover:opacity-100 font-terminal text-xs text-red-900/50 hover:text-red-600 transition-all mt-0.5"
+                  title="刪除此訊息"
+                >
+                  [×]
+                </button>
+              )}
+            </div>
+          )
+        })}
+        <div ref={bottomRef} />
+      </div>
+
+      {/* Input */}
+      <form onSubmit={handleSend} className="flex items-center gap-2 border-t border-red-900/20 pt-3">
+        <span className="font-terminal text-red-500">{'>'}</span>
+        <input
+          type="text"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          disabled={sending}
+          className="flex-1 bg-transparent font-terminal text-sm text-red-300 focus:outline-none tracking-wider placeholder:text-red-900/40 caret-red-400"
+          placeholder="輸入訊息..."
+          autoComplete="off"
+        />
+        <button
+          type="submit"
+          disabled={sending || !input.trim()}
+          className="font-terminal text-xs text-red-400 hover:text-red-300 tracking-widest border border-red-900/30 px-3 py-1 hover:border-red-700/50 transition-colors disabled:opacity-30"
+        >
+          SEND_
+        </button>
+      </form>
     </div>
   )
 }
@@ -250,11 +345,13 @@ function AccessDenied() {
 
 export default function Secret() {
   const [phase, setPhase] = useState<Phase>('boot')
+  const [role, setRole] = useState<Role | null>(null)
   const navigate = useNavigate()
 
-  const handleNavigate = useCallback((href: string) => {
-    navigate(href)
-  }, [navigate])
+  const handleSuccess = useCallback((r: Role) => {
+    setRole(r)
+    setPhase('chat')
+  }, [])
 
   const handleExit = () => navigate('/')
 
@@ -301,12 +398,12 @@ export default function Secret() {
             )}
             {phase === 'auth' && (
               <AuthPrompt
-                onSuccess={() => setPhase('access')}
+                onSuccess={handleSuccess}
                 onFail={() => setPhase('denied')}
               />
             )}
-            {phase === 'access' && (
-              <AccessGranted onNavigate={handleNavigate} />
+            {phase === 'chat' && role && (
+              <ChatRoom role={role} />
             )}
             {phase === 'denied' && (
               <AccessDenied />

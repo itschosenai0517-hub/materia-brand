@@ -19,38 +19,47 @@ app.use(express.json())
 /**
  * POST /api/verify-capitol
  * Body: { token: string }
- * Returns: { granted: boolean }
+ * Returns: { granted: boolean, role: 'admin' | 'user' | null }
  *
- * Compares the submitted token to CAPITOL_SECRET using a timing-safe comparison
- * so an attacker can't measure response time to guess the password character by character.
+ * Compares the submitted token to ADMIN_SECRET and USER_SECRET using a
+ * timing-safe comparison to prevent timing attacks.
  */
 app.post('/api/verify-capitol', (req, res) => {
   const { token } = req.body ?? {}
 
   if (typeof token !== 'string' || token.length === 0) {
-    return res.status(400).json({ granted: false, error: 'Invalid request' })
+    return res.status(400).json({ granted: false, role: null, error: 'Invalid request' })
   }
 
-  const secret = process.env.CAPITOL_SECRET
-  if (!secret) {
-    console.error('[capitol] CAPITOL_SECRET environment variable is not set')
-    return res.status(500).json({ granted: false, error: 'Server misconfiguration' })
+  const adminSecret = process.env.ADMIN_SECRET
+  const userSecret = process.env.USER_SECRET
+
+  if (!adminSecret || !userSecret) {
+    console.error('[capitol] ADMIN_SECRET or USER_SECRET environment variable is not set')
+    return res.status(500).json({ granted: false, role: null, error: 'Server misconfiguration' })
   }
 
-  // Hash both sides so timingSafeEqual always compares equal-length Buffers
-  const hashToken  = createHash('sha256').update(token).digest()
-  const hashSecret = createHash('sha256').update(secret).digest()
+  // Hash the token so timingSafeEqual always compares equal-length Buffers
+  const hashToken = createHash('sha256').update(token).digest()
+  const hashAdmin = createHash('sha256').update(adminSecret).digest()
+  const hashUser  = createHash('sha256').update(userSecret).digest()
 
-  let granted = false
+  let role: 'admin' | 'user' | null = null
   try {
-    granted = timingSafeEqual(hashToken, hashSecret)
+    if (timingSafeEqual(hashToken, hashAdmin)) {
+      role = 'admin'
+    } else if (timingSafeEqual(hashToken, hashUser)) {
+      role = 'user'
+    }
   } catch {
-    granted = false
+    role = null
   }
+
+  const granted = role !== null
 
   // Small artificial delay (50–150 ms) to further discourage brute-force attempts
   const jitter = 50 + Math.floor(Math.random() * 100)
-  setTimeout(() => res.json({ granted }), jitter)
+  setTimeout(() => res.json({ granted, role }), jitter)
 })
 
 // ─── Static files (Vite build) ────────────────────────────────────────────────
@@ -68,5 +77,6 @@ app.get(/^(?!\/api\/).*$/, (_req, res) => {
 app.listen(PORT, () => {
   console.log(`[materia] Server running on port ${PORT}`)
   console.log(`[materia] Serving static files from: ${distPath}`)
-  console.log(`[materia] CAPITOL_SECRET: ${process.env.CAPITOL_SECRET ? '✓ set' : '✗ NOT SET'}`)
+  console.log(`[materia] ADMIN_SECRET: ${process.env.ADMIN_SECRET ? '✓ set' : '✗ NOT SET'}`)
+  console.log(`[materia] USER_SECRET: ${process.env.USER_SECRET ? '✓ set' : '✗ NOT SET'}`)
 })
