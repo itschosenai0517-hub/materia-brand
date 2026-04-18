@@ -52,9 +52,17 @@ firebase deploy --only firestore:rules
 
 ### 4. 啟動開發伺服器
 
+Capitol Terminal 密碼驗證需要 Express server 一起跑，開兩個 terminal：
+
 ```bash
+# Terminal 1 — API server（port 3001）
+CAPITOL_SECRET=your_password PORT=3001 node server.js
+
+# Terminal 2 — Vite dev server（port 5173，/api 自動 proxy 到 3001）
 npm run dev
 ```
+
+如果不需要測試 Easter Egg 密碼，只跑 `npm run dev` 也沒問題，密碼輸入會回傳 `granted: false`。
 
 ---
 
