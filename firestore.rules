@@ -26,12 +26,11 @@ service cloud.firestore {
       allow read: if request.auth != null && request.auth.token.admin == true;
     }
 
-    // Capitol encrypted chat — anyone (verified by server) can read/create.
-    // Delete is open here because the role check is enforced in the client;
-    // tighten this with a Cloud Function or custom claims if needed.
+    // Capitol encrypted chat — anyone can read/create (access controlled by server-verified password).
+    // Delete is restricted to authenticated admin users only.
     match /capitol_chat/{id} {
       allow read, create: if true;
-      allow delete: if true;   // client enforces admin-only UI
+      allow delete: if request.auth != null && request.auth.token.admin == true;
     }
   }
 }
