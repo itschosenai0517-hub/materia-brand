@@ -18,7 +18,7 @@ const MOCK_PRODUCTS: Product[] = [
     id: 'p1', name: '冷製薰衣草手工皂', nameEn: 'Lavender Cold Process Soap',
     description: '以台灣有機薰衣草精油手工製作，附工匠簽名卡與材料溯源說明。',
     price: 480, category: 'soap', images: [], materials: ['有機薰衣草精油', '橄欖油', '乳油木果脂'],
-    impactNote: '每售出一塊，捐贈NT24元予合作庇護工場', inStock: true, featured: true, createdAt: null,
+    impactNote: '每售出一塊，捐贈新臺幣24元予合作庇護工場', inStock: true, featured: true, createdAt: null,
   },
   {
     id: 'p2', name: '大豆蠟木芯蠟燭', nameEn: 'Soy Wax Wood Wick Candle',
@@ -34,7 +34,7 @@ const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'p4', name: '季度職人訂閱盒', nameEn: 'Artisan Quarterly Subscription',
-    description: '每季精選4–6件職人選物，附本季影響力數字報告。',
+    description: '每季精選4~6件職人選物，附本季影響力數字報告。',
     price: 980, category: 'subscription', images: [], materials: ['季節限定選品'],
     impactNote: '訂閱戶享優先體驗新品，捐贈比例8%', inStock: true, featured: false, createdAt: null,
   },
@@ -42,7 +42,7 @@ const MOCK_PRODUCTS: Product[] = [
     id: 'p5', name: '炭黑排毒手工皂', nameEn: 'Activated Charcoal Detox Soap',
     description: '竹炭與茶樹精油配方，深層清潔。適合油性肌膚。',
     price: 520, category: 'soap', images: [], materials: ['竹炭粉', '茶樹精油', '蓖麻油'],
-    impactNote: '每售出一塊，捐贈 NT$26 予合作庇護工場', inStock: true, featured: false, createdAt: null,
+    impactNote: '每售出一塊，捐贈新臺幣26予合作庇護工場', inStock: true, featured: false, createdAt: null,
   },
   {
     id: 'p6', name: '麝香琥珀蠟燭', nameEn: 'Musk Amber Soy Candle',

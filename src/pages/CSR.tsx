@@ -8,24 +8,24 @@ const PLANS = [
     code: 'Basic',
     name: 'Impact Basic',
     price: 'NT$800 / 件起',
-    min: '50 件起訂',
+    min: '50件起訂',
     features: [
       '客製包裝設計',
       '手工皂 / 蠟燭選品',
-      '品牌 LOGO 印製',
+      '品牌LOGO印製',
       '基本材料說明卡',
     ],
   },
   {
     code: 'Pro',
     name: 'Impact Pro',
-    price: 'NT$1500元 / 件起',
+    price: 'NT1500元 / 件起',
     min: '30件起訂',
     features: [
       'Basic全部內容',
       '品牌故事小冊',
       '工匠姓名卡',
-      '季度 Impact Report',
+      '季度Impact Report',
       '公益捐贈比例標示',
     ],
     highlight: true,
@@ -240,7 +240,7 @@ function InquiryForm() {
 
 export default function CSR() {
   useEffect(() => {
-    setPageMeta('CSR 企業合作', '與 MATERIA 合作，為企業設計可溯源的 CSR 禮品與活動體驗，附 Impact Report。', 'https://materia.tw/og-image.jpg')
+    setPageMeta('CSR企業合作', '與MATERIA合作，為企業設計可溯源的CSR 禮品與活動體驗，附Impact Report。', 'https://materia.tw/og-image.jpg')
   }, [])
 
   return (
@@ -249,7 +249,7 @@ export default function CSR() {
       <section className="pt-32 pb-20 px-6 lg:px-12">
         <div className="max-w-7xl mx-auto">
           <p className="font-sans text-xs tracking-[0.3em] uppercase text-brand-coral mb-6">
-            企業 CSR 合作
+            企業CSR合作
           </p>
           <h1 className="font-display text-5xl lg:text-7xl font-light text-brand-ivory leading-tight mb-6">
             CSR不是費用，
@@ -258,7 +258,7 @@ export default function CSR() {
           </h1>
           <p className="font-sans text-base text-brand-silver/50 max-w-md leading-relaxed">
             每一次企業合作，我們都為您設計可量化、
-            可溯源、可傳播的 CSR 影響力方案。
+            可溯源、可傳播的CSR影響力方案。
           </p>
         </div>
       </section>

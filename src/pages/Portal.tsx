@@ -81,7 +81,7 @@ export default function Portal() {
           <div className="grid grid-cols-3 gap-8">
             {[
               { value: '0', label: '累計購買件數' },
-              { value: 'NT$0', label: '累計公益捐贈' },
+              { value: 'NT 0元', label: '累計公益捐贈' },
               { value: '0 kg', label: '減碳貢獻' },
             ].map(m => (
               <div key={m.label}>

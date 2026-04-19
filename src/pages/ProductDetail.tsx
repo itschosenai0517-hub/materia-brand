@@ -8,10 +8,10 @@ import { formatCurrency, setPageMeta } from '@/lib/utils'
 const MOCK: Record<string, Product> = {
   p1: {
     id: 'p1', name: '冷製薰衣草手工皂', nameEn: 'Lavender Cold Process Soap',
-    description: '以台灣有機薰衣草精油手工製作，附工匠簽名卡與材料溯源說明。每一塊皂都經過 4–6 週冷製熟成，皂體溫和不刺激，適合所有膚質。',
+    description: '以台灣有機薰衣草精油手工製作，附工匠簽名卡與材料溯源說明。每一塊皂都經過4~6週冷製熟成，皂體溫和不刺激，適合所有膚質。',
     price: 480, category: 'soap', images: [],
     materials: ['有機薰衣草精油', '橄欖油', '乳油木果脂', '椰子油', '棕櫚油（RSPO 認證）'],
-    impactNote: '每售出一塊，捐贈NT24元予合作庇護工場', inStock: true, featured: true, createdAt: null,
+    impactNote: '每售出一塊，捐贈新臺幣24元予合作庇護工場', inStock: true, featured: true, createdAt: null,
   },
   p2: {
     id: 'p2', name: '大豆蠟木芯蠟燭', nameEn: 'Soy Wax Wood Wick Candle',
