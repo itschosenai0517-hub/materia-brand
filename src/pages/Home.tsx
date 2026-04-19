@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, ChevronDown } from 'lucide-react'
+import { ArrowRight, ChevronDown, CheckCircle2, Star, Newspaper } from 'lucide-react'
 import { getImpactMetrics, type ImpactMetric } from '@/firebase/firestore'
 import { animateCounter, formatNumber, setPageMeta } from '@/lib/utils'
 
@@ -127,6 +127,276 @@ function TrustBar() {
             {p}
           </span>
         ))}
+      </div>
+    </section>
+  )
+}
+
+// ─── About Section ────────────────────────────────────────────────────────────
+
+function AboutSection() {
+  const { ref, visible } = useReveal(0.1)
+
+  return (
+    <section ref={ref} className="py-24 px-6 lg:px-12 border-t border-brand-silver/10 bg-brand-carbon/30">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+          {/* Left: title */}
+          <div className={`transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+            <p className="font-sans text-xs tracking-[0.3em] uppercase text-brand-coral mb-4">
+              關於 MATERIA
+            </p>
+            <h2 className="font-display text-4xl lg:text-5xl font-light text-brand-ivory leading-tight mb-6">
+              不只是製造，
+              <br />
+              <span className="italic">是一種承諾</span>
+            </h2>
+            <p className="font-sans text-sm text-brand-silver/50 leading-relaxed mb-4">
+              MATERIA 成立於 2014 年，從台南一間手工包裝工作室出發，十年來深耕永續代工、公益製造與職人工藝。我們相信，企業禮品與選物可以是改變社會的媒介。
+            </p>
+            <p className="font-sans text-sm text-brand-silver/50 leading-relaxed mb-8">
+              我們與超過 30 間庇護工場、NGO 及在地工藝師合作，每一件出廠的產品都有名字、有故事、有可追蹤的社會影響力數據。
+            </p>
+            <Link
+              to="/about"
+              className="font-sans text-xs tracking-widest uppercase text-brand-silver/40 hover:text-brand-coral transition-colors duration-200 flex items-center gap-2"
+            >
+              認識我們的故事
+              <ArrowRight size={12} />
+            </Link>
+          </div>
+
+          {/* Right: milestones */}
+          <div className={`transition-all duration-700 delay-200 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+            <div className="space-y-0">
+              {[
+                { year: '2014', text: '創立於台南，從手工包裝工作室起步' },
+                { year: '2017', text: '首度與庇護工場合作，推出公益代工模式' },
+                { year: '2019', text: '轉型社會企業，建立 Impact Report 制度' },
+                { year: '2022', text: 'B2B CSR 服務上線，首年突破百家企業客戶' },
+                { year: '2024', text: '累計超過 28,000 件產品出廠，34 家長期合作夥伴' },
+              ].map((item, i) => (
+                <div
+                  key={item.year}
+                  className={`flex gap-6 py-6 border-b border-brand-silver/10 last:border-0 transition-all duration-500 ${visible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'}`}
+                  style={{ transitionDelay: `${200 + i * 80}ms` }}
+                >
+                  <span className="font-sans text-xs tracking-widest text-brand-coral w-12 flex-shrink-0 pt-0.5">
+                    {item.year}
+                  </span>
+                  <p className="font-sans text-sm text-brand-silver/50 leading-relaxed">
+                    {item.text}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ─── Stats Highlight ──────────────────────────────────────────────────────────
+
+function StatsHighlight() {
+  const { ref, visible } = useReveal(0.15)
+  const [counts, setCounts] = useState([0, 0, 0, 0])
+
+  const stats = [
+    { value: 10, suffix: '+', label: '年深耕永續製造' },
+    { value: 34, suffix: '', label: '企業長期合作夥伴' },
+    { value: 98, suffix: '%', label: '客戶滿意度' },
+    { value: 3, suffix: '萬+', label: '累計出貨件數' },
+  ]
+
+  useEffect(() => {
+    if (!visible) return
+    stats.forEach((stat, i) => {
+      const timer = setTimeout(() => {
+        animateCounter(stat.value, 1600, (v) => {
+          setCounts(prev => {
+            const next = [...prev]
+            next[i] = v
+            return next
+          })
+        })
+      }, i * 120)
+      return () => clearTimeout(timer)
+    })
+  }, [visible])
+
+  return (
+    <section ref={ref} className="py-20 px-6 lg:px-12 border-t border-brand-silver/10">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-brand-silver/10">
+          {stats.map((stat, i) => (
+            <div
+              key={stat.label}
+              className={`bg-brand-charcoal p-10 text-center transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+              style={{ transitionDelay: `${i * 100}ms` }}
+            >
+              <p className="font-display text-5xl lg:text-6xl font-light text-brand-coral mb-3">
+                {counts[i]}{stat.suffix}
+              </p>
+              <p className="font-sans text-xs tracking-widest uppercase text-brand-silver/40">
+                {stat.label}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ─── Services ─────────────────────────────────────────────────────────────────
+
+function Services() {
+  const { ref, visible } = useReveal(0.1)
+
+  const items = [
+    {
+      label: '01',
+      title: 'CSR 代工',
+      subtitle: 'Enterprise',
+      body: '為企業設計可溯源的 CSR 禮品與活動體驗，附 Impact Report。從材料選定到品牌故事，全程客製。',
+      cta: '了解方案',
+      href: '/csr',
+    },
+    {
+      label: '02',
+      title: '職人選物',
+      subtitle: 'Consumer',
+      body: '每件手工皂與蠟燭都附材料溯源卡。訂閱制每季選物盒，附本季影響力數字。',
+      cta: '探索商品',
+      href: '/products',
+    },
+    {
+      label: '03',
+      title: '公益製造',
+      subtitle: 'Social',
+      body: '與庇護工場合作，標明工匠姓名。聯合 NGO 發行聯名限定款，每筆捐贈比例公開透明。',
+      cta: '了解理念',
+      href: '/about',
+    },
+  ]
+
+  return (
+    <section ref={ref} className="py-24 px-6 lg:px-12 border-t border-brand-silver/10">
+      <div className="max-w-7xl mx-auto">
+        <div
+          className={`mb-16 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+        >
+          <p className="font-sans text-xs tracking-[0.3em] uppercase text-brand-coral mb-4">
+            服務模式
+          </p>
+          <h2 className="font-display text-4xl lg:text-5xl font-light text-brand-ivory">
+            三種切入，
+            <br />
+            <span className="italic">一個核心</span>
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-brand-silver/10">
+          {items.map((item, i) => (
+            <div
+              key={item.label}
+              className={`bg-brand-charcoal p-10 group hover:bg-brand-carbon transition-all duration-500 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+              style={{ transitionDelay: `${i * 120}ms` }}
+            >
+              <p className="font-sans text-xs text-brand-silver/30 tracking-widest mb-8">
+                {item.label}
+              </p>
+              <p className="font-sans text-xs tracking-widest uppercase text-brand-coral mb-3">
+                {item.subtitle}
+              </p>
+              <h3 className="font-display text-3xl font-light text-brand-ivory mb-4">
+                {item.title}
+              </h3>
+              <p className="font-sans text-sm text-brand-silver/50 leading-relaxed mb-8">
+                {item.body}
+              </p>
+              <Link
+                to={item.href}
+                className="font-sans text-xs tracking-widest uppercase text-brand-silver/40 hover:text-brand-coral transition-colors duration-200 flex items-center gap-2"
+              >
+                {item.cta}
+                <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-200" />
+              </Link>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ─── Why Us ───────────────────────────────────────────────────────────────────
+
+function WhyUs() {
+  const { ref, visible } = useReveal(0.1)
+
+  const reasons = [
+    {
+      title: '完整溯源鏈',
+      body: '從原料產地到成品交付，每個環節都有記錄。Impact Report 隨貨附上，數字公開透明。',
+    },
+    {
+      title: '職人工藝品質',
+      body: '與有名字的工匠合作，不是工廠流水線。每批次都有品質驗核，確保一致水準。',
+    },
+    {
+      title: '客製化彈性',
+      body: '小量到大量皆可配合，從 Logo 印刷到全品項開發，彈性因應不同 CSR 預算與需求。',
+    },
+    {
+      title: '48 小時快速回應',
+      body: '專屬顧問在 48 小時內提供方案初稿與報價，讓 CSR 計畫準時上線。',
+    },
+    {
+      title: '社會效益保證',
+      body: '合作即代表支持庇護工場就業與 NGO 公益，每筆訂單的捐贈比例事前約定、事後公開。',
+    },
+    {
+      title: '品牌共創支援',
+      body: '提供文案、視覺、故事包裝協助，讓你的 CSR 禮品不只是禮品，更是品牌的延伸。',
+    },
+  ]
+
+  return (
+    <section ref={ref} className="py-24 px-6 lg:px-12 border-t border-brand-silver/10 bg-brand-carbon/20">
+      <div className="max-w-7xl mx-auto">
+        <div
+          className={`mb-16 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+        >
+          <p className="font-sans text-xs tracking-[0.3em] uppercase text-brand-coral mb-4">
+            為何選擇我們
+          </p>
+          <h2 className="font-display text-4xl lg:text-5xl font-light text-brand-ivory">
+            六個理由，
+            <br />
+            <span className="italic">信任 MATERIA</span>
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-brand-silver/10">
+          {reasons.map((reason, i) => (
+            <div
+              key={reason.title}
+              className={`bg-brand-charcoal p-8 group transition-all duration-500 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+              style={{ transitionDelay: `${i * 80}ms` }}
+            >
+              <CheckCircle2 size={16} className="text-brand-coral mb-5 opacity-60" />
+              <h3 className="font-sans text-sm font-medium text-brand-ivory mb-3">
+                {reason.title}
+              </h3>
+              <p className="font-sans text-xs text-brand-silver/40 leading-relaxed">
+                {reason.body}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   )
@@ -271,35 +541,26 @@ function ImpactDashboard() {
   )
 }
 
-// ─── Services ─────────────────────────────────────────────────────────────────
+// ─── Testimonials ─────────────────────────────────────────────────────────────
 
-function Services() {
+function Testimonials() {
   const { ref, visible } = useReveal(0.1)
 
-  const items = [
+  const testimonials = [
     {
-      label: '01',
-      title: 'CSR 代工',
-      subtitle: 'Enterprise',
-      body: '為企業設計可溯源的 CSR 禮品與活動體驗，附 Impact Report。從材料選定到品牌故事，全程客製。',
-      cta: '了解方案',
-      href: '/csr',
+      quote: '第一次合作 CSR 代工就選 MATERIA，從設計到出貨不到三週，附上的 Impact Report 讓我們在股東會上有了有力的說明材料。',
+      name: '陳副總',
+      role: '某科技集團 CSR 部門副總',
     },
     {
-      label: '02',
-      title: '職人選物',
-      subtitle: 'Consumer',
-      body: '每件手工皂與蠟燭都附材料溯源卡。訂閱制每季選物盒，附本季影響力數字。',
-      cta: '探索商品',
-      href: '/products',
+      quote: '訂了季度選物盒送給全體員工，每一件都附有溯源卡，同事反應比一般禮盒更有溫度。明年繼續。',
+      name: 'Michelle L.',
+      role: '新創公司 HR Director',
     },
     {
-      label: '03',
-      title: '公益製造',
-      subtitle: 'Social',
-      body: '與庇護工場合作，標明工匠姓名。聯合 NGO 發行聯名限定款，每筆捐贈比例公開透明。',
-      cta: '了解理念',
-      href: '/about',
+      quote: 'MATERIA 是我合作過最有誠意的品牌，他們真的在意每一個環節，不是用永續當噱頭。',
+      name: '林執行長',
+      role: '社會企業創辦人',
     },
   ]
 
@@ -310,43 +571,125 @@ function Services() {
           className={`mb-16 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
         >
           <p className="font-sans text-xs tracking-[0.3em] uppercase text-brand-coral mb-4">
-            服務模式
+            客戶見證
           </p>
           <h2 className="font-display text-4xl lg:text-5xl font-light text-brand-ivory">
-            三種切入，
-            <br />
-            <span className="italic">一個核心</span>
+            他們怎麼說
           </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-brand-silver/10">
-          {items.map((item, i) => (
+          {testimonials.map((t, i) => (
             <div
-              key={item.label}
-              className={`bg-brand-charcoal p-10 group hover:bg-brand-carbon transition-all duration-500 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+              key={t.name}
+              className={`bg-brand-charcoal p-10 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
               style={{ transitionDelay: `${i * 120}ms` }}
             >
-              <p className="font-sans text-xs text-brand-silver/30 tracking-widest mb-8">
-                {item.label}
+              {/* Stars */}
+              <div className="flex gap-1 mb-6">
+                {[...Array(5)].map((_, j) => (
+                  <Star key={j} size={10} className="fill-brand-coral text-brand-coral" />
+                ))}
+              </div>
+              <p className="font-sans text-sm text-brand-silver/60 leading-relaxed mb-8 italic">
+                「{t.quote}」
               </p>
-              <p className="font-sans text-xs tracking-widest uppercase text-brand-coral mb-3">
-                {item.subtitle}
-              </p>
-              <h3 className="font-display text-3xl font-light text-brand-ivory mb-4">
-                {item.title}
-              </h3>
-              <p className="font-sans text-sm text-brand-silver/50 leading-relaxed mb-8">
-                {item.body}
-              </p>
-              <Link
-                to={item.href}
-                className="font-sans text-xs tracking-widest uppercase text-brand-silver/40 hover:text-brand-coral transition-colors duration-200 flex items-center gap-2"
-              >
-                {item.cta}
-                <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-200" />
-              </Link>
+              <div className="border-t border-brand-silver/10 pt-6">
+                <p className="font-sans text-xs text-brand-ivory">{t.name}</p>
+                <p className="font-sans text-xs text-brand-silver/30 mt-1">{t.role}</p>
+              </div>
             </div>
           ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ─── Latest News ──────────────────────────────────────────────────────────────
+
+function LatestNews() {
+  const { ref, visible } = useReveal(0.1)
+
+  const news = [
+    {
+      date: '2025.04',
+      tag: '媒體報導',
+      title: 'MATERIA 登上《天下雜誌》永續企業專題',
+      excerpt: '報導聚焦 MATERIA 如何透過代工模式重新定義 CSR，讓企業禮品成為社會影響力的載體。',
+    },
+    {
+      date: '2025.03',
+      tag: '新品上架',
+      title: '2025 春季限定「山林系」選物盒正式開放預購',
+      excerpt: '本季與台東有機農場合作，推出天然蠟燭與手工皂組合，附完整的工匠故事溯源卡。',
+    },
+    {
+      date: '2025.02',
+      tag: '里程碑',
+      title: '累計捐款突破 NT$ 100 萬，感謝每一位合作夥伴',
+      excerpt: '隨著訂單持續成長，本月累計公益捐款金額正式突破百萬，資金全數流向合作 NGO 就業計畫。',
+    },
+  ]
+
+  return (
+    <section ref={ref} className="py-24 px-6 lg:px-12 border-t border-brand-silver/10 bg-brand-carbon/20">
+      <div className="max-w-7xl mx-auto">
+        <div
+          className={`flex items-end justify-between mb-16 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+        >
+          <div>
+            <p className="font-sans text-xs tracking-[0.3em] uppercase text-brand-coral mb-4">
+              最新消息
+            </p>
+            <h2 className="font-display text-4xl lg:text-5xl font-light text-brand-ivory">
+              近期動態
+            </h2>
+          </div>
+          <Link
+            to="/about"
+            className="hidden lg:flex font-sans text-xs tracking-widest uppercase text-brand-silver/40 hover:text-brand-coral transition-colors duration-200 items-center gap-2"
+          >
+            查看全部
+            <ArrowRight size={12} />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-brand-silver/10">
+          {news.map((item, i) => (
+            <div
+              key={item.title}
+              className={`bg-brand-charcoal p-8 group hover:bg-brand-carbon transition-all duration-500 cursor-pointer ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+              style={{ transitionDelay: `${i * 120}ms` }}
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <span className="font-sans text-xs text-brand-silver/30 tracking-widest">
+                  {item.date}
+                </span>
+                <span className="font-sans text-xs tracking-widest uppercase text-brand-coral border border-brand-coral/30 px-2 py-0.5">
+                  {item.tag}
+                </span>
+              </div>
+              <Newspaper size={14} className="text-brand-silver/20 mb-4" />
+              <h3 className="font-sans text-sm font-medium text-brand-ivory leading-relaxed mb-4 group-hover:text-brand-coral transition-colors duration-200">
+                {item.title}
+              </h3>
+              <p className="font-sans text-xs text-brand-silver/40 leading-relaxed">
+                {item.excerpt}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Mobile: view all */}
+        <div className={`mt-8 lg:hidden flex justify-center transition-all duration-700 delay-500 ${visible ? 'opacity-100' : 'opacity-0'}`}>
+          <Link
+            to="/about"
+            className="font-sans text-xs tracking-widest uppercase text-brand-silver/40 hover:text-brand-coral transition-colors duration-200 flex items-center gap-2"
+          >
+            查看全部動態
+            <ArrowRight size={12} />
+          </Link>
         </div>
       </div>
     </section>
@@ -462,8 +805,13 @@ export default function Home() {
     <>
       <Hero />
       <TrustBar />
+      <AboutSection />
+      <StatsHighlight />
       <Services />
+      <WhyUs />
       <ImpactDashboard />
+      <Testimonials />
+      <LatestNews />
       <StoryTeaser />
       <FinalCTA />
     </>
