@@ -195,11 +195,25 @@ function ChatRoom({ role }: { role: Role }) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
+  const [connError, setConnError] = useState<string | null>(null)
+  const [connected, setConnected] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   // Subscribe to real-time messages
   useEffect(() => {
-    const unsub = subscribeChatMessages(setMessages)
+    setConnError(null)
+    setConnected(false)
+    const unsub = subscribeChatMessages(
+      (msgs) => {
+        setMessages(msgs)
+        setConnected(true)
+        setConnError(null)
+      },
+      (err) => {
+        setConnError(err.message)
+        setConnected(false)
+      }
+    )
     return unsub
   }, [])
 
@@ -246,11 +260,23 @@ function ChatRoom({ role }: { role: Role }) {
         >
           [{role.toUpperCase()}]
         </span>
+        {/* Connection status */}
+        <span className={`font-terminal text-xs ${connected ? 'text-green-700/50' : 'text-red-900/50'}`}>
+          {connected ? '● LIVE' : '○ 連線中...'}
+        </span>
       </div>
+
+      {/* Error display */}
+      {connError && (
+        <div className="border border-red-800/40 bg-red-950/20 px-3 py-2">
+          <p className="font-terminal text-xs text-red-500">// 連線錯誤: {connError}</p>
+          <p className="font-terminal text-xs text-red-900/50 mt-1">// 請截圖此錯誤訊息以便排查</p>
+        </div>
+      )}
 
       {/* Message list */}
       <div className="flex-1 overflow-y-auto space-y-3 pr-1 max-h-72 scrollbar-thin scrollbar-thumb-red-900/40">
-        {messages.length === 0 && (
+        {!connError && messages.length === 0 && (
           <p className="font-terminal text-xs text-red-900/40 italic">// 頻道靜默中 — 等待通訊</p>
         )}
         {messages.map(msg => {

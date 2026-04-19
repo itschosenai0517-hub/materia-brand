@@ -159,16 +159,24 @@ export async function sendChatMessage(
  * Returns an unsubscribe function.
  */
 export function subscribeChatMessages(
-  callback: (messages: ChatMessage[]) => void
+  callback: (messages: ChatMessage[]) => void,
+  onError?: (err: Error) => void
 ) {
   const q = query(
     collection(db, 'capitol_chat'),
     orderBy('createdAt', 'asc')
   )
-  return onSnapshot(q, snap => {
-    const messages = snap.docs.map(d => ({ id: d.id, ...d.data() } as ChatMessage))
-    callback(messages)
-  })
+  return onSnapshot(
+    q,
+    snap => {
+      const messages = snap.docs.map(d => ({ id: d.id, ...d.data() } as ChatMessage))
+      callback(messages)
+    },
+    err => {
+      console.error('[Firestore] subscribeChatMessages error:', err)
+      onError?.(err)
+    }
+  )
 }
 
 /**
