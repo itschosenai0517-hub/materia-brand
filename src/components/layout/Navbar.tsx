@@ -6,7 +6,7 @@ import { signOut } from '@/firebase/auth'
 import { cn } from '@/lib/utils'
 
 const NAV_LINKS = [
-  { href: '/csr', label: 'CSR 合作' },
+  { href: '/csr', label: 'CSR合作' },
   { href: '/products', label: '職人選物' },
   { href: '/about', label: '品牌故事' },
 ]

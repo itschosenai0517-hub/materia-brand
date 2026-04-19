@@ -38,7 +38,7 @@ export default function Login() {
       } else if (msg.includes('email-already-in-use')) {
         setError('此信箱已被使用')
       } else if (msg.includes('weak-password')) {
-        setError('密碼至少需要 6 個字元')
+        setError('密碼至少需要6個字元')
       } else {
         setError('登入失敗，請稍後再試')
       }

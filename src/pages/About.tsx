@@ -48,7 +48,7 @@ export default function About() {
           </div>
           <div>
             <p className="font-sans text-base text-brand-silver/50 leading-relaxed mb-6">
-              MATERIA 起源於一個簡單的信念：
+              MATERIA起源於一個簡單的信念：
               當我們決定如何製造一件東西，
               我們也在決定這個世界的樣貌。
             </p>
@@ -111,7 +111,7 @@ export default function About() {
       <section className="py-20 px-6 lg:px-12 border-t border-brand-silver/10">
         <div className="max-w-3xl mx-auto text-center">
           <p className="font-sans text-xs tracking-[0.3em] uppercase text-brand-silver/30 mb-6">
-            Canva 視覺方向建議
+            Canva視覺方向建議
           </p>
           <p className="font-sans text-sm text-brand-silver/40 leading-relaxed">
             品牌主視覺以「工業感精品」為軸心：

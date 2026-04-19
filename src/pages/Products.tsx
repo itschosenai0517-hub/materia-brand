@@ -18,7 +18,7 @@ const MOCK_PRODUCTS: Product[] = [
     id: 'p1', name: '冷製薰衣草手工皂', nameEn: 'Lavender Cold Process Soap',
     description: '以台灣有機薰衣草精油手工製作，附工匠簽名卡與材料溯源說明。',
     price: 480, category: 'soap', images: [], materials: ['有機薰衣草精油', '橄欖油', '乳油木果脂'],
-    impactNote: '每售出一塊，捐贈 NT$24 予合作庇護工場', inStock: true, featured: true, createdAt: null,
+    impactNote: '每售出一塊，捐贈NT24元予合作庇護工場', inStock: true, featured: true, createdAt: null,
   },
   {
     id: 'p2', name: '大豆蠟木芯蠟燭', nameEn: 'Soy Wax Wood Wick Candle',
@@ -28,15 +28,15 @@ const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'p3', name: '職人春季禮盒', nameEn: 'Artisan Spring Gift Set',
-    description: '手工皂 2 塊 + 蠟燭 1 入 + 品牌故事冊，適合節慶或員工禮品。',
+    description: '手工皂2塊 + 蠟燭1入 + 品牌故事冊，適合節慶或員工禮品。',
     price: 1280, category: 'gift-set', images: [], materials: ['手工皂', '大豆蠟蠟燭', 'FSC 認證包裝'],
-    impactNote: '每盒包含工匠手寫卡片，捐贈比例 5%', inStock: true, featured: true, createdAt: null,
+    impactNote: '每盒包含工匠手寫卡片，捐贈比例5%', inStock: true, featured: true, createdAt: null,
   },
   {
     id: 'p4', name: '季度職人訂閱盒', nameEn: 'Artisan Quarterly Subscription',
-    description: '每季精選 4–6 件職人選物，附本季影響力數字報告。',
+    description: '每季精選4–6件職人選物，附本季影響力數字報告。',
     price: 980, category: 'subscription', images: [], materials: ['季節限定選品'],
-    impactNote: '訂閱戶享優先體驗新品，捐贈比例 8%', inStock: true, featured: false, createdAt: null,
+    impactNote: '訂閱戶享優先體驗新品，捐贈比例8%', inStock: true, featured: false, createdAt: null,
   },
   {
     id: 'p5', name: '炭黑排毒手工皂', nameEn: 'Activated Charcoal Detox Soap',
@@ -46,7 +46,7 @@ const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'p6', name: '麝香琥珀蠟燭', nameEn: 'Musk Amber Soy Candle',
-    description: '溫暖的琥珀麝香調，燃燒時長約 45 小時。',
+    description: '溫暖的琥珀麝香調，燃燒時長約45小時。',
     price: 780, category: 'candle', images: [], materials: ['大豆蠟', '麝香精油', '琥珀原料'],
     impactNote: '每售出一件，種植一棵台灣原生樹種', inStock: true, featured: false, createdAt: null,
   },

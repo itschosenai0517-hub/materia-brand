@@ -19,10 +19,10 @@ const PLANS = [
   {
     code: 'Pro',
     name: 'Impact Pro',
-    price: 'NT$1,500 / 件起',
-    min: '30 件起訂',
+    price: 'NT$1500元 / 件起',
+    min: '30件起訂',
     features: [
-      'Basic 全部內容',
+      'Basic全部內容',
       '品牌故事小冊',
       '工匠姓名卡',
       '季度 Impact Report',
@@ -48,9 +48,9 @@ const PLANS = [
 
 const MATERIALS = [
   { name: '冷製手工皂', origin: '台灣在地農場', cert: '無農藥認證' },
-  { name: '大豆蠟', origin: '非基改美國大豆', cert: 'RSPO 認證' },
+  { name: '大豆蠟', origin: '非基改美國大豆', cert: 'RSPO認證' },
   { name: '精油原料', origin: '台灣薰衣草農場', cert: '有機認證' },
-  { name: '包裝用紙', origin: '台灣回收再生', cert: 'FSC 認證' },
+  { name: '包裝用紙', origin: '台灣回收再生', cert: 'FSC認證' },
   { name: '棉芯燭芯', origin: '無漂白棉線', cert: '無鉛認證' },
 ]
 
@@ -150,7 +150,7 @@ function InquiryForm() {
       })
       setSubmitted(true)
     } catch {
-      setError('提交失敗，請稍後再試或直接寄信至 hello@materia.tw')
+      setError('提交失敗，請稍後再試或直接寄信至materia2014@gmail.')
     } finally {
       setSubmitting(false)
     }
@@ -162,7 +162,7 @@ function InquiryForm() {
         <CheckCircle size={40} className="text-brand-coral mx-auto mb-6" />
         <h3 className="font-display text-3xl text-brand-ivory mb-4">已收到您的需求</h3>
         <p className="font-sans text-sm text-brand-silver/50">
-          我們將在 48 小時內與您聯繫，提供客製化方案。
+          我們將在48小時內與您聯繫，提供客製化方案。
         </p>
       </div>
     )
@@ -178,7 +178,7 @@ function InquiryForm() {
           提交需求
         </p>
         <h2 className="font-display text-4xl font-light text-brand-ivory mb-12">
-          開始你的 CSR 計畫
+          開始你的CSR計畫
         </h2>
         <form onSubmit={handleSubmit} className="space-y-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -252,7 +252,7 @@ export default function CSR() {
             企業 CSR 合作
           </p>
           <h1 className="font-display text-5xl lg:text-7xl font-light text-brand-ivory leading-tight mb-6">
-            CSR 不是費用，
+            CSR不是費用，
             <br />
             <span className="italic">是投資</span>
           </h1>

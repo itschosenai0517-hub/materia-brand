@@ -11,11 +11,11 @@ const MOCK: Record<string, Product> = {
     description: '以台灣有機薰衣草精油手工製作，附工匠簽名卡與材料溯源說明。每一塊皂都經過 4–6 週冷製熟成，皂體溫和不刺激，適合所有膚質。',
     price: 480, category: 'soap', images: [],
     materials: ['有機薰衣草精油', '橄欖油', '乳油木果脂', '椰子油', '棕櫚油（RSPO 認證）'],
-    impactNote: '每售出一塊，捐贈 NT$24 予合作庇護工場', inStock: true, featured: true, createdAt: null,
+    impactNote: '每售出一塊，捐贈NT24元予合作庇護工場', inStock: true, featured: true, createdAt: null,
   },
   p2: {
     id: 'p2', name: '大豆蠟木芯蠟燭', nameEn: 'Soy Wax Wood Wick Candle',
-    description: '非基改美國大豆蠟，搭配木質燃芯，燃燒時有輕微劈啪聲，如壁爐的療癒感。燃燒時長約 40 小時。',
+    description: '非基改美國大豆蠟，搭配木質燃芯，燃燒時有輕微劈啪聲，如壁爐的療癒感。燃燒時長約40小時。',
     price: 680, category: 'candle', images: [],
     materials: ['非基改大豆蠟', '木質燭芯', '天然精油', '玻璃容器（可回收）'],
     impactNote: '每售出一件，種植一棵台灣原生樹種', inStock: true, featured: true, createdAt: null,
