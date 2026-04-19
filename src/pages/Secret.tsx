@@ -64,29 +64,43 @@ type Role = 'admin' | 'user'
 // ─── District Status Panel ─────────────────────────────────────────────────────
 
 const DISTRICTS = [
-  { id: 1, name: 'LUXURY', status: 'COMPLIANT', color: 'text-yellow-600/60' },
-  { id: 2, name: 'MASONRY', status: 'COMPLIANT', color: 'text-yellow-600/60' },
-  { id: 3, name: 'TECHNOLOGY', status: 'COMPLIANT', color: 'text-yellow-600/60' },
-  { id: 4, name: 'FISHING', status: 'COMPLIANT', color: 'text-yellow-600/60' },
-  { id: 5, name: 'POWER', status: 'MONITORING', color: 'text-amber-700/60' },
-  { id: 6, name: 'TRANSPORT', status: 'COMPLIANT', color: 'text-yellow-600/60' },
-  { id: 7, name: 'LUMBER', status: 'MONITORING', color: 'text-amber-700/60' },
-  { id: 8, name: 'TEXTILES', status: 'ALERT', color: 'text-red-600/80' },
-  { id: 9, name: 'GRAIN', status: 'COMPLIANT', color: 'text-yellow-600/60' },
-  { id: 10, name: 'LIVESTOCK', status: 'COMPLIANT', color: 'text-yellow-600/60' },
-  { id: 11, name: 'AGRICULTURE', status: 'ALERT', color: 'text-red-600/80' },
-  { id: 12, name: 'MINING', status: 'SUPPRESSED', color: 'text-red-900/80' },
-]
+  { id: 1,  name: 'LUXURY',      status: 'COMPLIANT',  color: 'text-yellow-500/80' },
+  { id: 2,  name: 'MASONRY',     status: 'COMPLIANT',  color: 'text-yellow-500/80' },
+  { id: 3,  name: 'TECHNOLOGY',  status: 'COMPLIANT',  color: 'text-yellow-500/80' },
+  { id: 4,  name: 'FISHING',     status: 'COMPLIANT',  color: 'text-yellow-500/80' },
+  { id: 5,  name: 'POWER',       status: 'MONITORING', color: 'text-amber-500' },
+  { id: 6,  name: 'TRANSPORT',   status: 'COMPLIANT',  color: 'text-yellow-500/80' },
+  { id: 7,  name: 'LUMBER',      status: 'MONITORING', color: 'text-amber-500' },
+  { id: 8,  name: 'TEXTILES',    status: 'ALERT',      color: 'text-red-400' },
+  { id: 9,  name: 'GRAIN',       status: 'COMPLIANT',  color: 'text-yellow-500/80' },
+  { id: 10, name: 'LIVESTOCK',   status: 'COMPLIANT',  color: 'text-yellow-500/80' },
+  { id: 11, name: 'AGRICULTURE', status: 'ALERT',      color: 'text-red-400' },
+  { id: 12, name: 'MINING',      status: 'SUPPRESSED', color: 'text-red-600' },
+  { id: 13, name: 'NUCLEAR',     status: 'DESTROYED',  color: 'text-gray-500/70', rebel: true },
+] as const
 
 function DistrictGrid() {
   return (
     <div className="mt-4 border border-red-900/20 p-3">
-      <p className="font-terminal text-xs text-red-900/50 tracking-widest mb-2 uppercase">// DISTRICT STATUS GRID — YEAR 74</p>
+      <p className="font-terminal text-xs text-red-700/60 tracking-widest mb-2 uppercase">// DISTRICT STATUS GRID — YEAR 74</p>
       <div className="grid grid-cols-4 gap-1">
         {DISTRICTS.map(d => (
-          <div key={d.id} className="border border-red-950/30 px-2 py-1">
-            <p className="font-terminal text-xs text-red-900/40">D{String(d.id).padStart(2, '0')}</p>
-            <p className={`font-terminal text-xs ${d.color} truncate`}>{d.status}</p>
+          <div
+            key={d.id}
+            className={`border px-2 py-1 transition-colors duration-300 ${'rebel' in d && d.rebel
+              ? 'border-red-700/40 hover:border-red-500/60 group cursor-default'
+              : 'border-red-950/30'
+            }`}
+          >
+            <p className="font-terminal text-xs text-red-700/60">D{String(d.id).padStart(2, '0')}</p>
+            {'rebel' in d && d.rebel ? (
+              <>
+                <p className="font-terminal text-xs truncate text-gray-500/70 group-hover:hidden">{d.status}</p>
+                <p className="font-terminal text-xs text-red-400 hidden group-hover:block truncate">ALIVE — ACTIVE</p>
+              </>
+            ) : (
+              <p className={`font-terminal text-xs truncate ${d.color}`}>{d.status}</p>
+            )}
           </div>
         ))}
       </div>
@@ -122,7 +136,6 @@ function CapitolSeal() {
       >
         <div className="absolute inset-1 border border-red-900/20 rounded-full" />
         <svg viewBox="0 0 40 40" className="w-8 h-8 opacity-60">
-          {/* Capitol eagle-style abstract seal */}
           <circle cx="20" cy="20" r="18" fill="none" stroke="rgba(139,0,0,0.5)" strokeWidth="0.5" />
           <path d="M20 4 L22 16 L34 12 L24 20 L32 30 L20 24 L8 30 L16 20 L6 12 L18 16 Z"
             fill="rgba(139,0,0,0.3)" stroke="rgba(180,0,0,0.6)" strokeWidth="0.5" />
@@ -137,22 +150,55 @@ function CapitolSeal() {
   )
 }
 
+// ─── Mockingjay SVG ───────────────────────────────────────────────────────────
+
+function MockingjayIcon({ className = 'w-10 h-10', opacity = 'opacity-60' }: { className?: string; opacity?: string }) {
+  return (
+    <svg
+      viewBox="0 0 80 80"
+      className={`${className} ${opacity}`}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="Mockingjay symbol"
+    >
+      <circle cx="40" cy="40" r="38" stroke="rgba(220,50,50,0.7)" strokeWidth="1" />
+      <circle cx="40" cy="40" r="33" stroke="rgba(180,0,0,0.4)" strokeWidth="0.5" />
+      <line x1="40" y1="8" x2="40" y2="58" stroke="rgba(220,50,50,0.9)" strokeWidth="2" />
+      <polyline points="34,20 40,8 46,20" stroke="rgba(220,50,50,0.9)" strokeWidth="2" fill="none" strokeLinejoin="round" />
+      <path
+        d="M40 30 C32 26 22 30 20 38 C18 44 24 50 32 48 L40 58 L48 48 C56 50 62 44 60 38 C58 30 48 26 40 30Z"
+        fill="rgba(180,0,0,0.5)"
+        stroke="rgba(220,50,50,0.7)"
+        strokeWidth="0.5"
+      />
+      <path d="M30 36 C22 32 12 36 10 42" stroke="rgba(220,50,50,0.6)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+      <path d="M50 36 C58 32 68 36 70 42" stroke="rgba(220,50,50,0.6)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+      <path d="M36 56 L34 68 M40 58 L40 70 M44 56 L46 68" stroke="rgba(180,0,0,0.5)" strokeWidth="1" strokeLinecap="round" />
+      <circle cx="40" cy="34" r="1.5" fill="rgba(220,50,50,0.9)" />
+    </svg>
+  )
+}
+
 // ─── Tribute Quote ─────────────────────────────────────────────────────────────
 
 const CAPITOL_QUOTES = [
-  '"may the odds be ever in your favor"',
-  '"hope is the only thing stronger than fear"',
-  '"fire is catching"',
-  '"if we burn, you burn with us"',
-  '"snow falls. blood spills. the games begin."',
+  { en: '"may the odds be ever in your favor"', zh: '「願機率永遠對你有利」' },
+  { en: '"hope is the only thing stronger than fear"', zh: '「希望是唯一比恐懼更強大的東西」' },
+  { en: '"fire is catching"', zh: '「火焰會蔓延」' },
+  { en: '"if we burn, you burn with us"', zh: '「如果我們燃燒，你也將與我們同燃」' },
+  { en: '"snow falls. blood spills. the games begin."', zh: '「雪降臨，血流淌，競技場的遊戲開始了」' },
+  { en: '"I am the Mockingjay."', zh: '「我就是學舌鳥」' },
+  { en: '"It\'s the things we love most that destroy us."', zh: '「摧毀我們的，往往是我們最深愛的事物」' },
+  { en: '"The bird, the pin, the song, the berries, the watch, the cracker, the dress that burst into flames."', zh: '「那隻鳥、那枚別針、那首歌、那些漿果、那只手錶、那塊餅乾、那件燃成火焰的裙子」' },
 ]
 
 function RandomQuote() {
-  const [quote] = useState(() => CAPITOL_QUOTES[Math.floor(Math.random() * CAPITOL_QUOTES.length)])
+  const [q] = useState(() => CAPITOL_QUOTES[Math.floor(Math.random() * CAPITOL_QUOTES.length)])
   return (
-    <p className="font-terminal text-xs text-red-900/30 italic text-center mt-2 px-4 leading-relaxed">
-      {quote}
-    </p>
+    <div className="mt-2 px-4 text-center space-y-1">
+      <p className="font-terminal text-xs text-red-600/70 italic leading-relaxed">{q.en}</p>
+      <p className="font-terminal text-xs text-red-800/60 leading-relaxed">{q.zh}</p>
+    </div>
   )
 }
 
@@ -167,6 +213,11 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
     { text: 'Establishing encrypted tunnel to the Capitol...', delay: 2400 },
     { text: '>>> CONNECTION ESTABLISHED <<<', delay: 3200 },
     { text: 'Welcome to THE CAPITOL TERMINAL.', delay: 4000 },
+    { text: '[REBEL NET] 攔截到加密訊號，來自第13區...', delay: 4900 },
+    { text: '[REBEL NET] Encrypted uplink from District 13...', delay: 5600 },
+    { text: '[REBEL NET] 學舌鳥尚存。凱妮絲·艾佛丁 — 狀態：活躍', delay: 6400 },
+    { text: '[REBEL NET] The Mockingjay lives. Katniss Everdeen — STATUS: ACTIVE', delay: 7200 },
+    { text: 'SIGNAL INTERCEPTED: ♩ ♪ ♩ ♪  — MOCKINGJAY FREQUENCY DETECTED', delay: 8000 },
   ]
   const lastDone = useTypewriter(lines[lines.length - 1].text, 35, lines[lines.length - 1].delay)
 
@@ -180,14 +231,23 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
   return (
     <div className="space-y-2">
       <CapitolSeal />
-      {lines.map((l, i) => (
-        <TerminalLine
-          key={i}
-          text={l.text}
-          delay={l.delay}
-          className={i === lines.length - 1 ? 'text-red-300 terminal-glow' : 'text-red-700/70'}
-        />
-      ))}
+      {lines.map((l, i) => {
+        const isRebelLine = l.text.startsWith('[REBEL NET]') || l.text.startsWith('SIGNAL')
+        return (
+          <TerminalLine
+            key={i}
+            text={l.text}
+            delay={l.delay}
+            className={
+              i === 6
+                ? 'text-red-300 terminal-glow'
+                : isRebelLine
+                ? 'text-amber-500/90'
+                : 'text-red-500'
+            }
+          />
+        )
+      })}
       <DistrictGrid />
     </div>
   )
@@ -243,28 +303,28 @@ function AuthPrompt({
         <FlameIcon />
         <div>
           <p className="font-terminal text-xs text-red-500 tracking-widest uppercase">THE 74th HUNGER GAMES</p>
-          <p className="font-terminal text-xs text-red-900/50">REAPING SEASON — AUTHENTICATION REQUIRED</p>
+          <p className="font-terminal text-xs text-red-700/80">REAPING SEASON — AUTHENTICATION REQUIRED</p>
         </div>
         <FlameIcon />
       </div>
 
       <TerminalLine text="IDENTIFICATION REQUIRED." delay={0} className="text-red-400" />
-      <TerminalLine text="This terminal is monitored by Capitol Peacekeepers." delay={400} className="text-red-700/60" />
-      <TerminalLine text="Unauthorized access reported to President Snow." delay={900} className="text-red-900/50" />
+      <TerminalLine text="This terminal is monitored by Capitol Peacekeepers." delay={400} className="text-red-500" />
+      <TerminalLine text="Unauthorized access reported to President Snow." delay={900} className="text-red-700/80" />
 
       {/* District tags */}
       <div className="flex gap-2 flex-wrap mt-2">
         {['D01', 'D04', 'D07', 'D12'].map(d => (
-          <span key={d} className="font-terminal text-xs text-red-900/30 border border-red-950/30 px-2 py-0.5">
+          <span key={d} className="font-terminal text-xs text-red-700/60 border border-red-950/30 px-2 py-0.5">
             {d}
           </span>
         ))}
-        <span className="font-terminal text-xs text-red-900/20 px-2 py-0.5 italic">+8 districts</span>
+        <span className="font-terminal text-xs text-red-800/50 px-2 py-0.5 italic">+8 districts</span>
       </div>
 
       {step === 'email' ? (
         <form onSubmit={handleEmailSubmit} className="space-y-3 pt-4">
-          <p className="font-terminal text-xs text-red-700/50 tracking-widest uppercase">Tribute District ID</p>
+          <p className="font-terminal text-xs text-red-600/80 tracking-widest uppercase">Tribute District ID</p>
           <div className="flex items-center gap-2">
             <span className="font-terminal text-red-500">{'>'}</span>
             <input
@@ -283,7 +343,7 @@ function AuthPrompt({
         </form>
       ) : (
         <form onSubmit={handlePasswordSubmit} className="space-y-3 pt-4">
-          <p className="font-terminal text-xs text-red-700/50 tracking-widest uppercase">Capitol Access Code</p>
+          <p className="font-terminal text-xs text-red-600/80 tracking-widest uppercase">Capitol Access Code</p>
           <div className="flex items-center gap-2">
             <span className="font-terminal text-red-500">{'>'}</span>
             <input
@@ -320,7 +380,6 @@ function ChatRoom({ role }: { role: Role }) {
   const [connected, setConnected] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
-  // Subscribe to real-time messages
   useEffect(() => {
     setConnError(null)
     setConnected(false)
@@ -338,7 +397,6 @@ function ChatRoom({ role }: { role: Role }) {
     return unsub
   }, [])
 
-  // Auto-scroll to bottom on new messages
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
@@ -369,9 +427,15 @@ function ChatRoom({ role }: { role: Role }) {
 
   return (
     <div className="flex flex-col h-full space-y-4">
-      {/* Role badge */}
-      <div className="flex items-center gap-3">
-        <TerminalLine text="ENCRYPTED CHANNEL — ACTIVE" delay={0} className="text-green-400 terminal-glow" />
+      {/* Channel header with Mockingjay */}
+      <div className="flex items-center gap-3 border-b border-red-900/20 pb-3">
+        <MockingjayIcon className="w-7 h-7" opacity="opacity-70" />
+        <div className="flex-1">
+          <TerminalLine text="ENCRYPTED CHANNEL — ACTIVE" delay={0} className="text-green-400 terminal-glow" />
+          <p className="font-terminal text-xs text-amber-600/70 tracking-widest mt-0.5">
+            IF WE BURN, YOU BURN WITH US 
+          </p>
+        </div>
         <span
           className={`font-terminal text-xs tracking-widest px-2 py-0.5 border ${
             role === 'admin'
@@ -381,8 +445,7 @@ function ChatRoom({ role }: { role: Role }) {
         >
           [{role.toUpperCase()}]
         </span>
-        {/* Connection status */}
-        <span className={`font-terminal text-xs ${connected ? 'text-green-700/50' : 'text-red-900/50'}`}>
+        <span className={`font-terminal text-xs ${connected ? 'text-green-600/70' : 'text-red-700/60'}`}>
           {connected ? '● LIVE' : '○ 連線中...'}
         </span>
       </div>
@@ -391,20 +454,19 @@ function ChatRoom({ role }: { role: Role }) {
       {connError && (
         <div className="border border-red-800/40 bg-red-950/20 px-3 py-2">
           <p className="font-terminal text-xs text-red-500">// 連線錯誤: {connError}</p>
-          <p className="font-terminal text-xs text-red-900/50 mt-1">// 請截圖此錯誤訊息以便排查</p>
+          <p className="font-terminal text-xs text-red-700/60 mt-1">// 請截圖此錯誤訊息以便排查</p>
         </div>
       )}
 
       {/* Message list */}
       <div className="flex-1 overflow-y-auto space-y-3 pr-1 max-h-72 scrollbar-thin scrollbar-thumb-red-900/40">
         {!connError && messages.length === 0 && (
-          <p className="font-terminal text-xs text-red-900/40 italic">// 頻道靜默中 — 等待通訊</p>
+          <p className="font-terminal text-xs text-red-700/50 italic">// 頻道靜默中 — 等待通訊</p>
         )}
         {messages.map(msg => {
           const decrypted = decryptMessage(msg.content)
           const isOwn = msg.role === role
 
-          // Parse Firestore Timestamp → human-readable HH:MM
           const ts = msg.createdAt as { toDate?: () => Date } | null
           const timeLabel = ts?.toDate
             ? ts.toDate().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false })
@@ -413,16 +475,17 @@ function ChatRoom({ role }: { role: Role }) {
           return (
             <div
               key={msg.id}
-              className={`flex items-end gap-2 group ${isOwn ? 'justify-end' : 'justify-start'}`}
+              className={`flex flex-col gap-1 group ${isOwn ? 'items-end' : 'items-start'}`}
             >
-              {!isOwn && (
-                <span className={`font-terminal text-xs mb-0.5 ${
-                  msg.role === 'admin' ? 'text-yellow-700/60' : 'text-red-700/60'
-                }`}>
-                  [{msg.role.toUpperCase()}]
-                </span>
-              )}
-              <div className={`flex flex-col gap-1 ${isOwn ? 'items-end' : 'items-start'}`}>
+              {/* Role label */}
+              <span className={`font-terminal text-xs ${
+                msg.role === 'admin' ? 'text-yellow-600/80' : 'text-red-600/80'
+              }`}>
+                [{msg.role.toUpperCase()}]
+              </span>
+
+              {/* Bubble + delete button row */}
+              <div className={`flex items-end gap-2 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
                 <div
                   className={`max-w-xs px-3 py-2 border text-sm font-terminal ${
                     isOwn
@@ -430,28 +493,26 @@ function ChatRoom({ role }: { role: Role }) {
                       : 'border-red-900/30 text-red-400'
                   }`}
                 >
-                  {decrypted || <span className="opacity-30 italic">// 無法解密</span>}
+                  {decrypted || <span className="opacity-50 italic">// 無法解密</span>}
                 </div>
-                {timeLabel && (
-                  <p className="font-terminal text-xs text-red-950/40 tracking-widest px-1">
-                    {timeLabel}
-                  </p>
+
+                {/* Admin delete button — low opacity by default, full on group-hover */}
+                {role === 'admin' && msg.id && (
+                  <button
+                    onClick={() => handleDelete(msg.id!)}
+                    className="opacity-30 group-hover:opacity-100 font-terminal text-xs text-red-700 hover:text-red-400 transition-all mb-0.5 px-1 cursor-pointer"
+                    title="刪除此訊息"
+                  >
+                    [×]
+                  </button>
                 )}
               </div>
-              {isOwn && (
-                <span className="font-terminal text-xs mb-0.5 text-red-700/60">
-                  [{role.toUpperCase()}]
-                </span>
-              )}
-              {/* Admin delete button */}
-              {role === 'admin' && msg.id && (
-                <button
-                  onClick={() => handleDelete(msg.id!)}
-                  className="opacity-0 group-hover:opacity-100 font-terminal text-xs text-red-900/50 hover:text-red-600 transition-all mb-0.5"
-                  title="刪除此訊息"
-                >
-                  [×]
-                </button>
+
+              {/* Timestamp */}
+              {timeLabel && (
+                <p className="font-terminal text-xs text-red-800/60 tracking-widest px-1">
+                  {timeLabel}
+                </p>
               )}
             </div>
           )
@@ -494,68 +555,34 @@ function AccessDenied() {
         ACCESS DENIED.
       </p>
       <div className="border border-red-950/40 bg-red-950/10 px-4 py-3 space-y-2">
-        <p className="font-terminal text-xs text-red-800/60 tracking-widest uppercase">// CAPITOL SECURITY ALERT //</p>
-        <p className="font-terminal text-sm text-red-900/60 italic">
+        <p className="font-terminal text-xs text-red-600/80 tracking-widest uppercase">// CAPITOL SECURITY ALERT //</p>
+        <p className="font-terminal text-sm text-red-700/70 italic">
           &quot;May the odds be ever in your favor.&quot;
         </p>
-        <p className="font-terminal text-xs text-red-900/40">
+        <p className="font-terminal text-xs text-red-800/60">
           — Effie Trinket, District 12 Escort
         </p>
       </div>
       <div className="space-y-1 mt-4">
-        <p className="font-terminal text-xs text-red-950/50">
+        <p className="font-terminal text-xs text-red-800/60">
           [!] Incident logged: {new Date().toISOString()}
         </p>
-        <p className="font-terminal text-xs text-red-950/40">
+        <p className="font-terminal text-xs text-red-800/50">
           [!] Peacekeepers dispatched to your district.
         </p>
-        <p className="font-terminal text-xs text-red-950/30">
+        <p className="font-terminal text-xs text-red-800/40">
           [!] Tesserae allocation under review.
         </p>
       </div>
-      {/* Mockingjay SVG — proper vector symbol */}
-      <div className="mt-6 flex flex-col items-center gap-2">
-        <svg
-          viewBox="0 0 80 80"
-          className="w-16 h-16 opacity-20"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-label="Mockingjay symbol"
-        >
-          {/* Outer ring */}
-          <circle cx="40" cy="40" r="38" stroke="rgba(139,0,0,0.8)" strokeWidth="1" />
-          <circle cx="40" cy="40" r="33" stroke="rgba(139,0,0,0.4)" strokeWidth="0.5" />
-          {/* Arrow pointing up through the circle */}
-          <line x1="40" y1="8" x2="40" y2="58" stroke="rgba(180,0,0,0.9)" strokeWidth="2" />
-          <polyline points="34,20 40,8 46,20" stroke="rgba(180,0,0,0.9)" strokeWidth="2" fill="none" strokeLinejoin="round" />
-          {/* Bird body — stylized mockingjay silhouette */}
-          <path
-            d="M40 30 C32 26 22 30 20 38 C18 44 24 50 32 48 L40 58 L48 48 C56 50 62 44 60 38 C58 30 48 26 40 30Z"
-            fill="rgba(139,0,0,0.5)"
-            stroke="rgba(180,0,0,0.7)"
-            strokeWidth="0.5"
-          />
-          {/* Wings spread */}
-          <path
-            d="M30 36 C22 32 12 36 10 42"
-            stroke="rgba(180,0,0,0.6)"
-            strokeWidth="1.5"
-            fill="none"
-            strokeLinecap="round"
-          />
-          <path
-            d="M50 36 C58 32 68 36 70 42"
-            stroke="rgba(180,0,0,0.6)"
-            strokeWidth="1.5"
-            fill="none"
-            strokeLinecap="round"
-          />
-          {/* Tail feathers */}
-          <path d="M36 56 L34 68 M40 58 L40 70 M44 56 L46 68" stroke="rgba(139,0,0,0.5)" strokeWidth="1" strokeLinecap="round" />
-          {/* Eye */}
-          <circle cx="40" cy="34" r="1.5" fill="rgba(220,50,50,0.8)" />
-        </svg>
-        <p className="font-terminal text-xs text-red-950/20 tracking-[0.3em] uppercase">Panem et Circenses</p>
+      {/* Mockingjay — elevated opacity with flicker animation */}
+      <div className="mt-6 flex flex-col items-center gap-3">
+        <div style={{ animation: 'flicker 3s ease-in-out infinite alternate' }}>
+          <MockingjayIcon className="w-20 h-20" opacity="opacity-60" />
+        </div>
+        <p className="font-terminal text-xs text-red-700/60 tracking-[0.3em] uppercase">Panem et Circenses</p>
+        <p className="font-terminal text-xs text-red-800/50 tracking-widest italic">
+          「如果我們燃燒，你也將與我們同燃」
+        </p>
       </div>
     </div>
   )
@@ -607,10 +634,10 @@ export default function Secret() {
             <div className="w-2 h-2 rounded-full bg-red-900/60" />
             <div className="w-2 h-2 rounded-full bg-red-900/40" />
             <div className="w-2 h-2 rounded-full bg-red-900/20" />
-            <span className="font-terminal text-xs text-red-900/50 ml-2 tracking-widest">
+            <span className="font-terminal text-xs text-red-700/60 ml-2 tracking-widest">
               CAPITOL_SECURE_TERMINAL_v4.7.3
             </span>
-            <span className="ml-auto font-terminal text-xs text-red-900/30">
+            <span className="ml-auto font-terminal text-xs text-red-800/50">
               PANEM · YEAR 74
             </span>
           </div>
@@ -637,17 +664,17 @@ export default function Secret() {
         {/* Footer */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <p className="font-terminal text-xs text-red-950/40 tracking-widest">
+            <p className="font-terminal text-xs text-red-800/50 tracking-widest">
               PANEM ET CIRCENSES
             </p>
-            <span className="font-terminal text-xs text-red-950/20">|</span>
-            <p className="font-terminal text-xs text-red-950/25 tracking-widest">
-              {phase === 'chat' ? '🔒 ENCRYPTED' : phase === 'denied' ? '⛔ DENIED' : '○ STANDBY'}
+            <span className="font-terminal text-xs text-red-900/30">|</span>
+            <p className="font-terminal text-xs text-red-800/40 tracking-widest">
+              {phase === 'chat' ? '🔒ENCRYPTED' : phase === 'denied' ? '⛔DENIED' : '○ STANDBY'}
             </p>
           </div>
           <button
             onClick={handleExit}
-            className="font-terminal text-xs text-red-950/30 hover:text-red-900/50 tracking-widest transition-colors"
+            className="font-terminal text-xs text-red-800/40 hover:text-red-600/70 tracking-widest transition-colors"
           >
             [ESC] EXIT_
           </button>
