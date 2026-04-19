@@ -58,9 +58,34 @@ export function useIntersectionObserver(
   }
 }
 
-// SEO helper
-export function setPageMeta(title: string, description?: string) {
-  document.title = `${title} — MATERIA`
-  const desc = document.querySelector('meta[name="description"]')
-  if (desc && description) desc.setAttribute('content', description)
+// SEO helper — updates title, description, and optional og:image / og:title
+export function setPageMeta(title: string, description?: string, ogImage?: string) {
+  const fullTitle = `${title} — MATERIA`
+  document.title = fullTitle
+
+  const setMeta = (selector: string, attr: string, value: string) => {
+    let el = document.querySelector(selector)
+    if (!el) {
+      el = document.createElement('meta')
+      // Determine if it's a property (og) or name meta
+      if (selector.includes('property=')) {
+        ;(el as HTMLMetaElement).setAttribute('property', selector.match(/property="([^"]+)"/)?.[1] ?? '')
+      } else {
+        ;(el as HTMLMetaElement).setAttribute('name', selector.match(/name="([^"]+)"/)?.[1] ?? '')
+      }
+      document.head.appendChild(el)
+    }
+    el.setAttribute(attr, value)
+  }
+
+  if (description) {
+    setMeta('meta[name="description"]', 'content', description)
+    setMeta('meta[property="og:description"]', 'content', description)
+  }
+
+  setMeta('meta[property="og:title"]', 'content', fullTitle)
+
+  if (ogImage) {
+    setMeta('meta[property="og:image"]', 'content', ogImage)
+  }
 }

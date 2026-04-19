@@ -240,7 +240,7 @@ function InquiryForm() {
 
 export default function CSR() {
   useEffect(() => {
-    setPageMeta('CSR 企業合作', '與 MATERIA 合作，為企業設計可溯源的 CSR 禮品與活動體驗，附 Impact Report。')
+    setPageMeta('CSR 企業合作', '與 MATERIA 合作，為企業設計可溯源的 CSR 禮品與活動體驗，附 Impact Report。', 'https://materia.tw/og-image.jpg')
   }, [])
 
   return (

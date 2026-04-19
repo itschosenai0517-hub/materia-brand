@@ -4,11 +4,41 @@ import { ArrowRight, ChevronDown } from 'lucide-react'
 import { getImpactMetrics, type ImpactMetric } from '@/firebase/firestore'
 import { animateCounter, formatNumber, setPageMeta } from '@/lib/utils'
 
+// ─── useReveal hook — triggers animation only when element enters viewport ────
+
+function useReveal(threshold = 0.15) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true)
+          observer.unobserve(el)
+        }
+      },
+      { threshold }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [threshold])
+
+  return { ref, visible }
+}
+
 // ─── Hero ────────────────────────────────────────────────────────────────────
 
 function Hero() {
+  const { ref, visible } = useReveal(0.05)
+
   return (
-    <section className="relative min-h-screen flex flex-col justify-center px-6 lg:px-12 pt-24 pb-16 overflow-hidden">
+    <section
+      ref={ref}
+      className="relative min-h-screen flex flex-col justify-center px-6 lg:px-12 pt-24 pb-16 overflow-hidden"
+    >
       {/* Background texture */}
       <div
         className="absolute inset-0 opacity-5"
@@ -22,18 +52,25 @@ function Hero() {
 
       <div className="max-w-7xl mx-auto w-full relative z-10">
         {/* Overline */}
-        <p className="font-sans text-xs tracking-[0.3em] uppercase text-brand-coral mb-8 animate-fade-up">
+        <p className={`font-sans text-xs tracking-[0.3em] uppercase text-brand-coral mb-8 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+          style={{ transitionDelay: '0ms' }}>
           永續製造 · 社會影響力
         </p>
 
         {/* Headline */}
-        <h1 className="font-display text-[clamp(3rem,8vw,7rem)] font-light text-brand-ivory leading-[1.0] mb-8 animate-fade-up animate-delay-100">
+        <h1
+          className={`font-display text-[clamp(3rem,8vw,7rem)] font-light text-brand-ivory leading-[1.0] mb-8 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+          style={{ transitionDelay: '100ms' }}
+        >
           質地即
           <br />
           <span className="italic text-gradient-coral">宣言</span>
         </h1>
 
-        <p className="font-sans text-base text-brand-silver/60 max-w-md leading-relaxed mb-12 animate-fade-up animate-delay-200">
+        <p
+          className={`font-sans text-base text-brand-silver/60 max-w-md leading-relaxed mb-12 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+          style={{ transitionDelay: '200ms' }}
+        >
           MATERIA 是台灣首個以工藝溯源為核心的
           <br />
           CSR 永續代工品牌。每一件產品，
@@ -42,7 +79,10 @@ function Hero() {
         </p>
 
         {/* CTAs */}
-        <div className="flex flex-wrap gap-4 animate-fade-up animate-delay-300">
+        <div
+          className={`flex flex-wrap gap-4 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+          style={{ transitionDelay: '300ms' }}
+        >
           <Link to="/csr" className="btn-primary flex items-center gap-2">
             開始 CSR 計畫
             <ArrowRight size={14} />
@@ -53,7 +93,10 @@ function Hero() {
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-brand-silver/30 animate-fade-in animate-delay-700">
+        <div
+          className={`absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-brand-silver/30 transition-all duration-1000 ${visible ? 'opacity-100' : 'opacity-0'}`}
+          style={{ transitionDelay: '700ms' }}
+        >
           <span className="font-sans text-xs tracking-widest uppercase">Scroll</span>
           <ChevronDown size={14} className="animate-bounce" />
         </div>
@@ -135,21 +178,10 @@ function MetricCard({ value, suffix, label, description, progress, target, visib
 
 function ImpactDashboard() {
   const [metrics, setMetrics] = useState<ImpactMetric | null>(null)
-  const [visible, setVisible] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
+  const { ref, visible } = useReveal(0.2)
 
   useEffect(() => {
     getImpactMetrics().then(setMetrics)
-  }, [])
-
-  useEffect(() => {
-    if (!ref.current) return
-    const observer = new IntersectionObserver(
-      entries => { if (entries[0].isIntersecting) setVisible(true) },
-      { threshold: 0.2 }
-    )
-    observer.observe(ref.current)
-    return () => observer.disconnect()
   }, [])
 
   const m = metrics ?? {
@@ -242,6 +274,8 @@ function ImpactDashboard() {
 // ─── Services ─────────────────────────────────────────────────────────────────
 
 function Services() {
+  const { ref, visible } = useReveal(0.1)
+
   const items = [
     {
       label: '01',
@@ -270,9 +304,11 @@ function Services() {
   ]
 
   return (
-    <section className="py-24 px-6 lg:px-12 border-t border-brand-silver/10">
+    <section ref={ref} className="py-24 px-6 lg:px-12 border-t border-brand-silver/10">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-16">
+        <div
+          className={`mb-16 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+        >
           <p className="font-sans text-xs tracking-[0.3em] uppercase text-brand-coral mb-4">
             服務模式
           </p>
@@ -284,10 +320,11 @@ function Services() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-brand-silver/10">
-          {items.map(item => (
+          {items.map((item, i) => (
             <div
               key={item.label}
-              className="bg-brand-charcoal p-10 group hover:bg-brand-carbon transition-colors duration-300"
+              className={`bg-brand-charcoal p-10 group hover:bg-brand-carbon transition-all duration-500 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+              style={{ transitionDelay: `${i * 120}ms` }}
             >
               <p className="font-sans text-xs text-brand-silver/30 tracking-widest mb-8">
                 {item.label}
@@ -319,12 +356,16 @@ function Services() {
 // ─── Brand Story Teaser ───────────────────────────────────────────────────────
 
 function StoryTeaser() {
+  const { ref, visible } = useReveal(0.15)
+
   return (
-    <section className="py-24 px-6 lg:px-12 border-t border-brand-silver/10">
+    <section ref={ref} className="py-24 px-6 lg:px-12 border-t border-brand-silver/10">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Image placeholder */}
-          <div className="aspect-[4/3] bg-brand-carbon relative overflow-hidden">
+          <div
+            className={`aspect-[4/3] bg-brand-carbon relative overflow-hidden transition-all duration-700 ${visible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}
+          >
             <div
               className="absolute inset-0 opacity-30"
               style={{
@@ -338,7 +379,9 @@ function StoryTeaser() {
             </div>
           </div>
 
-          <div>
+          <div
+            className={`transition-all duration-700 delay-200 ${visible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'}`}
+          >
             <p className="font-sans text-xs tracking-[0.3em] uppercase text-brand-coral mb-6">
               品牌故事
             </p>
@@ -372,15 +415,19 @@ function StoryTeaser() {
 // ─── Final CTA ────────────────────────────────────────────────────────────────
 
 function FinalCTA() {
+  const { ref, visible } = useReveal(0.2)
+
   return (
-    <section className="py-32 px-6 lg:px-12 border-t border-brand-silver/10 relative overflow-hidden">
+    <section ref={ref} className="py-32 px-6 lg:px-12 border-t border-brand-silver/10 relative overflow-hidden">
       <div
         className="absolute inset-0 opacity-10"
         style={{
           backgroundImage: `radial-gradient(ellipse at 50% 100%, #C9785A 0%, transparent 60%)`,
         }}
       />
-      <div className="max-w-3xl mx-auto text-center relative z-10">
+      <div
+        className={`max-w-3xl mx-auto text-center relative z-10 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+      >
         <h2 className="font-display text-5xl lg:text-6xl font-light text-brand-ivory leading-tight mb-6">
           開始你的
           <br />

@@ -104,7 +104,7 @@
     z-index: 1;
   }
 
-  /* Noise texture overlay */
+  /* Noise texture overlay — isolated GPU layer to avoid per-repaint cost */
   .noise-overlay::after {
     content: '';
     position: fixed;
@@ -113,6 +113,9 @@
     opacity: 0.03;
     pointer-events: none;
     z-index: 0;
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
 
   /* Impact number animation */
@@ -167,4 +170,12 @@
   .animate-delay-700 { animation-delay: 700ms; }
 
   .opacity-0-init { opacity: 0; }
+}
+
+@keyframes flicker {
+  0%   { opacity: 1; transform: scale(1); }
+  25%  { opacity: 0.85; transform: scale(1.05) rotate(-2deg); }
+  50%  { opacity: 1; transform: scale(0.98) rotate(1deg); }
+  75%  { opacity: 0.9; transform: scale(1.03) rotate(-1deg); }
+  100% { opacity: 1; transform: scale(1.01); }
 }

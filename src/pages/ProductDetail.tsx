@@ -32,7 +32,10 @@ export default function ProductDetail() {
     getProduct(id).then(p => {
       const result = p ?? MOCK[id] ?? null
       setProduct(result)
-      if (result) setPageMeta(result.name, result.description)
+      if (result) {
+        const ogImage = result.images[0] ?? 'https://materia.tw/og-image.jpg'
+        setPageMeta(result.name, result.description, ogImage)
+      }
     }).finally(() => setLoading(false))
   }, [id])
 
