@@ -137,12 +137,15 @@ export async function logEasterEggAccess(uid: string, granted: boolean) {
   })
 }
 
+export async function getEasterEggSessions() {
+  const snap = await getDocs(
+    query(collection(db, 'easter_egg_sessions'), orderBy('triggeredAt', 'desc'))
+  )
+  return snap.docs.map(d => ({ id: d.id, ...d.data() } as EasterEggSession))
+}
+
 // ─── Chat ─────────────────────────────────────────────────────────────────────
 
-/**
- * Send a message to the shared Capitol chat room.
- * content should already be AES-encrypted via encryptMessage().
- */
 export async function sendChatMessage(
   role: 'admin' | 'user',
   encryptedContent: string
@@ -154,10 +157,6 @@ export async function sendChatMessage(
   })
 }
 
-/**
- * Subscribe to the Capitol chat room in real time.
- * Returns an unsubscribe function.
- */
 export function subscribeChatMessages(
   callback: (messages: ChatMessage[]) => void,
   onError?: (err: Error) => void
@@ -179,9 +178,6 @@ export function subscribeChatMessages(
   )
 }
 
-/**
- * Delete a single chat message (admin only).
- */
 export async function deleteChatMessage(messageId: string) {
   return deleteDoc(doc(db, 'capitol_chat', messageId))
 }
