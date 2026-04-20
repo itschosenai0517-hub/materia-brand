@@ -446,21 +446,29 @@ function MetricCard({ value, suffix, label, description, progress, target, visib
   )
 }
 
+const FALLBACK_METRICS: ImpactMetric = {
+  artisanHours: 12480,
+  donationAmount: 847200,
+  carbonSaved: 3240,
+  productsDelivered: 28600,
+  partnersCount: 34,
+  updatedAt: null,
+}
+
 function ImpactDashboard() {
-  const [metrics, setMetrics] = useState<ImpactMetric | null>(null)
+  const [metrics, setMetrics] = useState<ImpactMetric>(FALLBACK_METRICS)
+  const [metricsError, setMetricsError] = useState(false)
   const { ref, visible } = useReveal(0.2)
 
   useEffect(() => {
-    getImpactMetrics().then(setMetrics)
+    getImpactMetrics()
+      .then(setMetrics)
+      .catch(() => {
+        // Silently fall back to default values; log for debugging
+        console.warn('[ImpactDashboard] Failed to fetch impact metrics, using fallback values.')
+        setMetricsError(true)
+      })
   }, [])
-
-  const m = metrics ?? {
-    artisanHours: 12480,
-    donationAmount: 847200,
-    carbonSaved: 3240,
-    productsDelivered: 28600,
-    partnersCount: 34,
-  }
 
   return (
     <section ref={ref} className="py-24 px-6 lg:px-12">
@@ -472,16 +480,21 @@ function ImpactDashboard() {
           <h2 className="font-display text-4xl lg:text-5xl font-light text-brand-ivory">
             數字會說話
           </h2>
+          {metricsError && (
+            <p className="font-sans text-xs text-brand-silver/30 mt-3">
+              目前顯示參考數據，即時資料暫時無法載入。
+            </p>
+          )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-brand-silver/10">
           <div className="bg-brand-charcoal">
             <MetricCard
-              value={m.artisanHours}
+              value={metrics.artisanHours}
               suffix="h"
               label="工匠累計工時"
               description="與庇護工場夥伴共同創造"
-              progress={m.artisanHours}
+              progress={metrics.artisanHours}
               target={20000}
               visible={visible}
               delay={0}
@@ -489,11 +502,11 @@ function ImpactDashboard() {
           </div>
           <div className="bg-brand-charcoal">
             <MetricCard
-              value={m.donationAmount}
+              value={metrics.donationAmount}
               suffix=""
               label="公益捐款"
               description="每筆訂單直接挹注合作NGO"
-              progress={m.donationAmount}
+              progress={metrics.donationAmount}
               target={1500000}
               visible={visible}
               delay={150}
@@ -501,11 +514,11 @@ function ImpactDashboard() {
           </div>
           <div className="bg-brand-charcoal">
             <MetricCard
-              value={m.carbonSaved}
+              value={metrics.carbonSaved}
               suffix="kg"
               label="減碳量"
               description="使用永續原料與在地生產"
-              progress={m.carbonSaved}
+              progress={metrics.carbonSaved}
               target={10000}
               visible={visible}
               delay={300}
@@ -513,11 +526,11 @@ function ImpactDashboard() {
           </div>
           <div className="bg-brand-charcoal">
             <MetricCard
-              value={m.productsDelivered}
+              value={metrics.productsDelivered}
               suffix=""
               label="出貨件數"
               description="B2B + B2C累計交付"
-              progress={m.productsDelivered}
+              progress={metrics.productsDelivered}
               target={50000}
               visible={visible}
               delay={450}
@@ -525,11 +538,11 @@ function ImpactDashboard() {
           </div>
           <div className="bg-brand-charcoal sm:col-span-2 lg:col-span-2">
             <MetricCard
-              value={m.partnersCount}
+              value={metrics.partnersCount}
               suffix=""
               label="企業合作夥伴數"
               description="CSR長期合作客戶"
-              progress={m.partnersCount}
+              progress={metrics.partnersCount}
               target={100}
               visible={visible}
               delay={600}

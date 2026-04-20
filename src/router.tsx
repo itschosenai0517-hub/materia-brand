@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Layout from '@/components/layout/Layout'
 import { useAuth } from '@/context/AuthContext'
+import { isEasterEggUnlocked } from '@/context/EasterEggContext'
 
 // Lazy loaded pages
 const Home = lazy(() => import('@/pages/Home'))
@@ -24,6 +25,14 @@ function ProtectedRoute({ children, adminOnly = false }: {
   if (!user) return <Navigate to="/login" replace />
   if (adminOnly && !isAdmin) return <Navigate to="/portal" replace />
   return <>{children}</>
+}
+
+// Easter egg route guard — only accessible after triggering the easter egg
+function SecretRoute() {
+  if (!isEasterEggUnlocked()) {
+    return <Navigate to="/" replace />
+  }
+  return <Secret />
 }
 
 function PageLoader() {
@@ -52,8 +61,8 @@ export default function AppRoutes() {
             <ProtectedRoute adminOnly><Admin /></ProtectedRoute>
           } />
         </Route>
-        {/* Easter egg — no layout wrapper */}
-        <Route path="/secret" element={<Secret />} />
+        {/* Easter egg — no layout wrapper, session-gated */}
+        <Route path="/secret" element={<SecretRoute />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>

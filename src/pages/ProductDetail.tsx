@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, CheckCircle } from 'lucide-react'
+import { ArrowLeft, CheckCircle, Mail } from 'lucide-react'
 import { getProduct, type Product } from '@/firebase/firestore'
 import { formatCurrency, setPageMeta } from '@/lib/utils'
 
@@ -26,17 +26,31 @@ export default function ProductDetail() {
   const { id } = useParams<{ id: string }>()
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   useEffect(() => {
     if (!id) return
-    getProduct(id).then(p => {
-      const result = p ?? MOCK[id] ?? null
-      setProduct(result)
-      if (result) {
-        const ogImage = result.images[0] ?? 'https://materia.tw/og-image.jpg'
-        setPageMeta(result.name, result.description, ogImage)
-      }
-    }).finally(() => setLoading(false))
+    setLoading(true)
+    setError(false)
+    getProduct(id)
+      .then(p => {
+        const result = p ?? MOCK[id] ?? null
+        setProduct(result)
+        if (result) {
+          const ogImage = result.images[0] ?? 'https://materia.tw/og-image.jpg'
+          setPageMeta(result.name, result.description, ogImage)
+        }
+      })
+      .catch(() => {
+        // Firestore 失敗時降級至 mock
+        const fallback = MOCK[id] ?? null
+        setProduct(fallback)
+        if (fallback) {
+          setPageMeta(fallback.name, fallback.description, 'https://materia.tw/og-image.jpg')
+        }
+        setError(true)
+      })
+      .finally(() => setLoading(false))
   }, [id])
 
   if (loading) {
@@ -69,6 +83,13 @@ export default function ProductDetail() {
           <ArrowLeft size={12} />
           返回選物
         </Link>
+
+        {/* Error notice */}
+        {error && (
+          <p className="font-sans text-xs text-brand-silver/40 border border-brand-silver/10 px-4 py-2 mb-8">
+            目前顯示示範資料，部分資訊可能尚未同步。
+          </p>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           {/* Image */}
@@ -122,9 +143,27 @@ export default function ProductDetail() {
               <p className="font-sans text-sm text-brand-silver/60">{product.impactNote}</p>
             </div>
 
-            <button className="btn-primary w-full md:w-auto text-xs">
-              加入訂單
-            </button>
+            {/* CTA group */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button className="btn-primary flex-1 text-xs">
+                加入訂單
+              </button>
+              <a
+                href={`mailto:hello@materia.tw?subject=詢價：${encodeURIComponent(product.name)}&body=${encodeURIComponent(`您好，我想詢問「${product.name}」的相關資訊與採購報價。\n\n公司 / 姓名：\n數量需求：\n備註：`)}`}
+                className="btn-outline flex-1 text-xs flex items-center justify-center gap-2"
+              >
+                <Mail size={12} />
+                企業詢價
+              </a>
+            </div>
+
+            <p className="font-sans text-xs text-brand-silver/30 mt-4">
+              企業客製或大量採購，歡迎
+              <Link to="/csr" className="text-brand-coral hover:underline ml-1">
+                CSR 合作頁面
+              </Link>
+              填寫需求表單，48小時內回覆報價。
+            </p>
           </div>
         </div>
       </div>

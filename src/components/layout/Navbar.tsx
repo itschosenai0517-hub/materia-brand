@@ -4,6 +4,7 @@ import { Menu, X } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { signOut } from '@/firebase/auth'
 import { cn } from '@/lib/utils'
+import { useEasterEgg } from '@/context/EasterEggContext'
 
 const NAV_LINKS = [
   { href: '/csr', label: 'CSR合作' },
@@ -16,6 +17,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false)
   const { user, isAdmin } = useAuth()
   const location = useLocation()
+  const { logoLongPressHandlers } = useEasterEgg()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -56,11 +58,12 @@ export default function Navbar() {
           className="max-w-7xl mx-auto px-6 lg:px-12 h-16 flex items-center justify-between"
           aria-label="主要導航"
         >
-          {/* Logo */}
+          {/* Logo — long press 3s on mobile triggers easter egg */}
           <Link
             to="/"
-            className="font-display text-xl font-light tracking-[0.15em] text-brand-ivory uppercase"
+            className="font-display text-xl font-light tracking-[0.15em] text-brand-ivory uppercase select-none"
             aria-label="MATERIA 首頁"
+            {...logoLongPressHandlers}
           >
             Materia
           </Link>

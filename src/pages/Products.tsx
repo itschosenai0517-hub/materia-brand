@@ -12,7 +12,7 @@ const CATEGORIES = [
   { key: 'subscription', label: '訂閱制' },
 ]
 
-// Mock products shown while Firestore loads
+// Mock products shown while Firestore loads or on error
 const MOCK_PRODUCTS: Product[] = [
   {
     id: 'p1', name: '冷製薰衣草手工皂', nameEn: 'Lavender Cold Process Soap',
@@ -92,16 +92,37 @@ function ProductCard({ product }: { product: Product }) {
   )
 }
 
+function ProductSkeleton() {
+  return (
+    <div className="animate-pulse">
+      <div className="aspect-square bg-brand-carbon mb-4" />
+      <div className="h-3 bg-brand-carbon w-1/3 mb-2" />
+      <div className="h-5 bg-brand-carbon w-2/3 mb-3" />
+      <div className="h-3 bg-brand-carbon w-full" />
+    </div>
+  )
+}
+
 export default function Products() {
   const [activeCategory, setActiveCategory] = useState('')
-  const [products, setProducts] = useState<Product[]>(MOCK_PRODUCTS)
+  const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     setPageMeta('職人選物', '手工皂、蠟燭、限定禮盒與訂閱制選物盒，每件附材料溯源卡與影響力說明。')
-    getProducts().then(data => {
-      if (data.length > 0) setProducts(data)
-    }).finally(() => setLoading(false))
+    setLoading(true)
+    setError(null)
+    getProducts()
+      .then(data => {
+        setProducts(data.length > 0 ? data : MOCK_PRODUCTS)
+      })
+      .catch(() => {
+        // Firestore 失敗時靜默降級至 mock 資料，並顯示提示
+        setProducts(MOCK_PRODUCTS)
+        setError('目前顯示示範商品，部分資料可能尚未同步。')
+      })
+      .finally(() => setLoading(false))
   }, [])
 
   const filtered = activeCategory
@@ -123,6 +144,17 @@ export default function Products() {
           </h1>
         </div>
       </section>
+
+      {/* Error banner */}
+      {error && !loading && (
+        <section className="px-6 lg:px-12 mb-4">
+          <div className="max-w-7xl mx-auto">
+            <p className="font-sans text-xs text-brand-silver/40 border border-brand-silver/10 px-4 py-2">
+              {error}
+            </p>
+          </div>
+        </section>
+      )}
 
       {/* Filters */}
       <section className="px-6 lg:px-12 mb-12">
@@ -146,22 +178,12 @@ export default function Products() {
       {/* Grid */}
       <section className="px-6 lg:px-12 pb-24">
         <div className="max-w-7xl mx-auto">
-          {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="animate-pulse">
-                  <div className="aspect-square bg-brand-carbon mb-4" />
-                  <div className="h-3 bg-brand-carbon w-1/3 mb-2" />
-                  <div className="h-5 bg-brand-carbon w-2/3 mb-3" />
-                  <div className="h-3 bg-brand-carbon w-full" />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-              {filtered.map(p => <ProductCard key={p.id} product={p} />)}
-            </div>
-          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            {loading
+              ? Array.from({ length: 6 }).map((_, i) => <ProductSkeleton key={i} />)
+              : filtered.map(p => <ProductCard key={p.id} product={p} />)
+            }
+          </div>
         </div>
       </section>
     </>
