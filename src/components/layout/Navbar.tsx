@@ -62,7 +62,7 @@ export default function Navbar() {
           <Link
             to="/"
             className="font-display text-xl font-light tracking-[0.15em] text-brand-ivory uppercase select-none"
-            aria-label="MATERIA 首頁"
+            aria-label="MATERIA首頁"
             {...logoLongPressHandlers}
           >
             Materia

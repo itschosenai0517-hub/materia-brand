@@ -26,7 +26,7 @@ export default function Footer() {
             </p>
             <ul className="space-y-3">
               {[
-                { to: '/csr', label: 'CSR 企業合作' },
+                { to: '/csr', label: 'CSR企業合作' },
                 { to: '/products', label: '職人選物' },
                 { to: '/about', label: '品牌故事' },
               ].map(l => (
@@ -49,7 +49,7 @@ export default function Footer() {
             </p>
             <ul className="space-y-3">
               <li className="font-sans text-sm text-brand-silver/50">
-                hello@materia.tw
+                materia2014@gmail.com
               </li>
               <li className="font-sans text-sm text-brand-silver/50">
                 台灣 · 台北

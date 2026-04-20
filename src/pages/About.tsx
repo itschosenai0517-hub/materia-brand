@@ -5,8 +5,8 @@ const TIMELINE = [
   { year: '2014', title: '包裝工作室成立', body: '從一間小型包裝工作室開始，承接各式手工藝品的包裝設計與代工。' },
   { year: '2017', title: '公益合作起步', body: '與第一間庇護工場建立合作關係，開始以就業創造作為核心價值之一。' },
   { year: '2020', title: '手工皂與蠟燭線', body: '疫情期間轉型，推出自有手工皂與蠟燭產品線，著重永續原料溯源。' },
-  { year: '2023', title: 'CSR 品牌正式化', body: '整合 B2B 與 B2C 業務，以 MATERIA 為品牌名稱正式對外招商。' },
-  { year: '2025', title: '數位化與訂閱制', body: '推出線上平台、Impact Dashboard 與職人訂閱盒，邁向永續商業閉環。' },
+  { year: '2023', title: 'CSR品牌正式化', body: '整合B2B與B2C業務，以MATERIA為品牌名稱正式對外招商。' },
+  { year: '2025', title: '數位化與訂閱制', body: '推出線上平台、Impact Dashboard與職人訂閱盒，邁向永續商業閉環。' },
 ]
 
 const VALUES = [
@@ -16,7 +16,7 @@ const VALUES = [
   },
   {
     title: '影響力可量化',
-    body: '捐贈金額、工匠工時、減碳量，全部公開顯示。CSR 不是感覺，是數字。',
+    body: '捐贈金額、工匠工時、減碳量，全部公開顯示。CSR不是感覺，是數字。',
   },
   {
     title: '商業與公益不衝突',
@@ -26,7 +26,7 @@ const VALUES = [
 
 export default function About() {
   useEffect(() => {
-    setPageMeta('品牌故事', 'MATERIA 從代工工作室到社會企業品牌的轉型故事與核心價值。')
+    setPageMeta('品牌故事', 'MATERIA從代工工作室到社會企業品牌的轉型故事與核心價值。')
   }, [])
 
   return (
@@ -111,15 +111,10 @@ export default function About() {
       <section className="py-20 px-6 lg:px-12 border-t border-brand-silver/10">
         <div className="max-w-3xl mx-auto text-center">
           <p className="font-sans text-xs tracking-[0.3em] uppercase text-brand-silver/30 mb-6">
-            Canva視覺方向建議
+            
           </p>
           <p className="font-sans text-sm text-brand-silver/40 leading-relaxed">
-            品牌主視覺以「工業感精品」為軸心：
-            炭黑底色 + 細線條元素 + 珊瑚金作為點睛色。
-            字型建議使用 Cormorant Garamond（展示標題）
-            搭配 DM Sans（內文）。
-            主視覺照片建議使用高對比的俯拍工坊素材，
-            暗調燈光，強調材料質感與手工細節。
+            
           </p>
         </div>
       </section>
