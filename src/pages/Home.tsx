@@ -722,12 +722,12 @@ function StoryTeaser() {
           <div
             className={`aspect-[4/3] bg-brand-carbon relative overflow-hidden transition-all duration-700 ${visible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}
           >
-            <div
-              className="absolute inset-0 opacity-30"
-              style={{
-                backgroundImage: `radial-gradient(ellipse at 30% 60%, #C9785A 0%, transparent 60%)`,
-              }}
+            <img
+              src="/images/workshop.jpg"
+              alt="工坊"
+              className="w-full h-full object-cover"
             />
+          </div>
             <div className="absolute inset-0 flex items-end p-8">
               <p className="font-display text-6xl font-light text-brand-ivory/10">
                 工坊
